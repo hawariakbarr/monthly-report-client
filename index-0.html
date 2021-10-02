@@ -3,21 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-  <title>Edit Form &mdash; NDA Guest</title>
+  <title>Data Pengunjung NDA &mdash; NDA Guest</title>
 
   <!-- General CSS Files -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 
   <!-- CSS Libraries -->
+  <link rel="stylesheet" href="../node_modules/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="../node_modules/datatables.net-select-bs4/css/select.bootstrap4.min.css">
+  <link rel="stylesheet" href="../node_modules/izitoast/dist/css/iziToast.min.css">
+
   <link rel="stylesheet" href="../node_modules/selectric/public/selectric.css">
   <link rel="stylesheet" href="../node_modules/bootstrap-tagsinput/dist/bootstrap-tagsinput.css">
-
   <link rel="stylesheet" href="../node_modules/select2/dist/css/select2.min.css">
   <link rel="stylesheet" href="../node_modules/bootstrap-timepicker/css/bootstrap-timepicker.min.css">
 
   <link rel="stylesheet" href="../node_modules/bootstrap-daterangepicker/daterangepicker.css">  
-  <link rel="stylesheet" href="../node_modules/izitoast/dist/css/iziToast.min.css">
 
   <!-- Template CSS -->
   <link rel="stylesheet" href="../assets/css/style.css">
@@ -71,15 +73,15 @@
           </div>
           <ul class="sidebar-menu">
               <li class="menu-header">Dashboard</li>
-              <!-- <li class="nav-item dropdown">
+              <!-- <li class="nav-item dropdown active">
                 <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Dashboard</span></a>
                 <ul class="dropdown-menu">
-                  <li><a class="nav-link" href="index.html">Data Pengunjung NDA</a></li>
-                  <li><a class="nav-link" href="index.html">Ecommerce Dashboard</a></li>
+                  <li class="active"><a class="nav-link" href="index.html">Data Pengunjung NDA</a></li>
+                  <li class="active"><a class="nav-link" href="index.html">Ecommerce Dashboard</a></li>
                 </ul>
               </li> -->
-              <!-- <li><a class="nav-link" href="index.html">Data Pengunjung NDA</a></li> -->
-              <li><a class="nav-link" href="index.html"><i class="far fa-user"></i> <span>Data Pengunjung</span></a></li>
+              <!-- <li class="active"><a class="nav-link" href="index.html">Data Pengunjung NDA</a></li> -->
+              <li class="active"><a class="nav-link" href="index.html"><i class="far fa-user"></i> <span>Data Pengunjung</span></a></li>
               <!-- <li class="menu-header">Starter</li>
               <li class="nav-item dropdown">
                 <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fas fa-columns"></i> <span>Layout</span></a>
@@ -218,183 +220,27 @@
 
       <!-- Main Content -->
       <div class="main-content">
+  <!-- loading overlay section -->
+  <div class="loading" id="overlay" hidden>Loading&#8230;</div>
+  <!-- loading overlay section -->
+  <section class="section">
+    <div class="section-header">
+      <h1>Data Pengunjung NDA</h1>
+    </div>
 
-        <!-- loading overlay -->
-        <div class="loading" id="overlay" hidden>Loading&#8230;</div>
-        
-        <!-- Modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Isi Tanda Tangan</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <div>
-                  <div id="signature-pad" class="signature-pad">
-                    <div class="signature-pad--body">
-                      <canvas class="col-lg-12 col-md-12 col-sm-12" id="sig-canvas" style="height:150px"></canvas>
-                    </div>
-                    <div class="signature-pad--footer">
-                      <div class="description">Sign above</div>
-                      <div class="signature-pad--actions text-right">
-                        <button type="button" class="btn btn-sm btn-warning clear" data-action="clear">Clear</button>
-                        <button type="button" class="btn btn-sm btn-primary save" data-action="save-jpg">Save</button>
-                        <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal">Close</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+    <h2 class="section-title">Tabel Pengunjung</h2>
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <a href="nda-form-input.html" class="btn btn-primary">Tambah Data Pengunjung</a>
+            </div>
+            <div class="card-body" id="table-here">
             </div>
           </div>
         </div>
-        <!-- End of Modal -->
-        <section class="section">
-          <div class="section-header">
-            <div class="section-header-back">
-              <a href="index.html" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
-            </div>
-            <h1>Edit Data Pengunjung</h1>
-            <div class="section-header-breadcrumb">
-              <div class="breadcrumb-item active"><a href="index.html">Data Pengunjung</a></div>
-              <div class="breadcrumb-item">Edit Data Pengunjung</div>
-            </div>
-          </div>
-
-          <div class="section-body" id="default-form" style="display: block;">
-            <h2 class="section-title">Form Input Pengunjung</h2>
-            <form action="" id="example-form">
-              <div class="row">                
-                <div class="col-12 col-md-6 col-lg-6">
-                  <div class="card h-100">
-                    <!-- <div class="card-header">
-                      <h4>JavaScript Validation</h4>
-                    </div> -->
-                    <div class="card-body">
-                      <div class="form-group floating-addon">
-                        <label>Name</label>
-                        <div class="input-group">
-                          <div class="input-group-prepend">
-                            <div class="input-group-text">
-                              <i class="far fa-user"></i>
-                            </div>
-                          </div>
-                          <input id="name" type="text" class="form-control" autocomplete="off" name="nama" placeholder="Nama" required>
-                        </div>
-                      </div>
-      
-                      <div class="form-group floating-addon">
-                        <label>Email</label>
-                        <div class="input-group">
-                          <div class="input-group-prepend">
-                            <div class="input-group-text">
-                              <i class="fas fa-envelope"></i>
-                            </div>
-                          </div>
-                          <input id="email" type="email" class="form-control" autocomplete="off" name="email" placeholder="example@gmail.com" required>
-                        </div>
-                      </div>
-
-                      <div class="form-group floating-addon">
-                        <label>NIK</label>
-                        <div class="input-group">
-                          <div class="input-group-prepend">
-                            <div class="input-group-text">
-                              <i class="fas fa-id-card"></i>
-                            </div>
-                          </div>
-                          <input id="nikNumber" type="number" class="form-control" autocomplete="off" name="nik" onKeyPress="if(this.value.length==16) return false;" placeholder="321210*******" required>
-                        </div>
-                      </div>
-      
-                      <div class="form-group floating-addon">
-                        <label>Instansi</label>
-                        <div class="input-group">
-                          <div class="input-group-prepend">
-                            <div class="input-group-text">
-                              <i class="fas fa-building"></i>
-                            </div>
-                          </div>
-                          <input id="instansi" type="text" class="form-control" autocomplete="off" name="instansi" placeholder="Asal Instansi" required>
-                        </div>
-                      </div>
-      
-                      <div class="form-group floating-addon">
-                        <label>No Hp</label>
-                        <div class="input-group">
-                          <div class="input-group-prepend">
-                            <div class="input-group-text">
-                              <i class="fas fa-phone"></i>
-                            </div>
-                          </div>
-                          <input id="phoneNumber" type="text" class="form-control phone-number" autocomplete="off" name="noHp" placeholder="0896028XXXX" required>
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <label>Keperluan Kunjungan</label>
-                        <textarea id="kepKunjungan" class="form-control" style="height: 90px;" name="kepKunjungan" required style="resize: none;"></textarea>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-12 col-md-6 col-lg-6">
-                  <div class="card h-100">
-                    <div class="card-body">
-                      <div class="row">
-                        <div class="form-group col-6 col-md-6 col-lg-6">
-                          <label>Waktu Kedatangan</label>
-                          <input type="text" id="waktuKedatangan" class="form-control datetimepicker" autocomplete="off" name="wKedatangan" required>
-                        </div>
-                        <div class="form-group col-6 col-md-6 col-lg-6">
-                          <label>Waktu Kepulangan</label>
-                          <input type="text" id="waktuKepulangan" class="form-control datetimepicker" autocomplete="off" name="wKepulangan" required>
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <input class="btn btn-sm btn-primary sm" type="button" id="buttonModal" value="Buat TTD"  data-toggle="modal" data-target="#exampleModal">
-                      </div>
-                      <div class="form-group">
-                        <label class="">Upload Tanda Tangan</label>
-                        <div class="">
-                          <div id="ttd-preview" class="image-preview" style="height: 150px; width: 400px;">
-                            <form id="upload-file" method="post" enctype="multipart/form-data">
-                              <fieldset>
-                                <label for="ttd-upload" id="ttd-label">Choose File</label>
-                                <input type="file" name="ttd" id="ttd-upload" class="form-control" enctype="multipart/form-data"/>
-                              </fieldset>
-                            </form>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <label class="">Upload KTP</label>
-                        <div class="">
-                          <div id="image-preview" class="image-preview" style="height: 185px; width: 290px;">
-                            <label for="image-upload" id="image-label">Choose File</label>
-                            <input type="file" name="ktpImage" id="image-upload" class="form-control" enctype="multipart/form-data"/>
-                            <div class="invalid-feedback">
-                              KTPnya dulu bos! Untuk jaminan kerahasiaan data
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="card-footer text-right">
-                      <button class="btn btn-sm btn-primary" id="submitForm" type="submit" style=" float: right;">Submit</button>
-                      <button class="btn btn-sm btn-info mr-1" id="resetForm" style=" float: right;" onClick="resetForm()" disabled>Reset</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </form>
-
-          </div>
-        </section>
+      </div>
+  </section>
       </div>
       <footer class="main-footer">
         <div class="footer-left">
@@ -416,6 +262,11 @@
   <script src="../assets/js/stisla.js"></script>
 
   <!-- JS Libraies -->
+  <script src="../node_modules/datatables/media/js/jquery.dataTables.min.js"></script>
+  <script src="../node_modules/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+  <script src="../node_modules/datatables.net-select-bs4/js/select.bootstrap4.min.js"></script>
+  <script src="../node_modules/izitoast/dist/js/iziToast.min.js"></script>
+
   <script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
   <script src="../node_modules/selectric/public/jquery.selectric.min.js"></script>
   <script src="../node_modules/jquery_upload_preview/assets/js/jquery.uploadPreview.min.js"></script>
@@ -426,15 +277,13 @@
   <script src="../node_modules/bootstrap-daterangepicker/daterangepicker.js"></script>
   <script src="../node_modules/bootstrap-timepicker/js/bootstrap-timepicker.min.js"></script>
   <script src="../node_modules/select2/dist/js/select2.full.min.js"></script>
-  <script src="../node_modules/izitoast/dist/js/iziToast.min.js"></script>
-
 
   <!-- Template JS File -->
   <script src="../assets/js/scripts.js"></script>
   <script src="../assets/js/custom.js"></script>
 
   <!-- Page Specific JS File -->
-  <script src="../assets/js/page/nda-form-edit.js"></script>
-  <script src="../assets/js/page/signature.js"></script>
+  <script src="../assets/js/page/index.js"></script>
+  <script type="text/javascript" src="/env.json"></script>
 </body>
 </html>

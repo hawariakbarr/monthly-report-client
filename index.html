@@ -3,23 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-  <title>Data Pengunjung NDA &mdash; NDA Guest</title>
+  <title>Data Report &mdash; Stisla</title>
 
   <!-- General CSS Files -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 
   <!-- CSS Libraries -->
-  <link rel="stylesheet" href="../node_modules/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
-  <link rel="stylesheet" href="../node_modules/datatables.net-select-bs4/css/select.bootstrap4.min.css">
+  <link rel="stylesheet" href="../node_modules/bootstrap-daterangepicker/daterangepicker.css">
   <link rel="stylesheet" href="../node_modules/izitoast/dist/css/iziToast.min.css">
-
-  <link rel="stylesheet" href="../node_modules/selectric/public/selectric.css">
-  <link rel="stylesheet" href="../node_modules/bootstrap-tagsinput/dist/bootstrap-tagsinput.css">
   <link rel="stylesheet" href="../node_modules/select2/dist/css/select2.min.css">
+  <link rel="stylesheet" href="../node_modules/selectric/public/selectric.css">
   <link rel="stylesheet" href="../node_modules/bootstrap-timepicker/css/bootstrap-timepicker.min.css">
-
-  <link rel="stylesheet" href="../node_modules/bootstrap-daterangepicker/daterangepicker.css">  
+  <link rel="stylesheet" href="../node_modules/bootstrap-tagsinput/dist/bootstrap-tagsinput.css">
 
   <!-- Template CSS -->
   <link rel="stylesheet" href="../assets/css/style.css">
@@ -38,11 +34,9 @@
           </ul>
         </form>
         <ul class="navbar-nav navbar-right">
-          <li class="dropdown">
-            <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
+          <li class="dropdown"><a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
             <img alt="image" src="../assets/img/avatar/avatar-2.png" class="rounded-circle mr-1">
-            <div class="d-sm-none d-lg-inline-block" id="username"></div>
-          </a>
+            <div class="d-sm-none d-lg-inline-block" id="username">Who Are You</div></a>
             <div class="dropdown-menu dropdown-menu-right">
               <!-- <div class="dropdown-title">Logged in 5 min ago</div> -->
               <!-- <a href="features-profile.html" class="dropdown-item has-icon">
@@ -56,7 +50,7 @@
                 <i class="fas fa-cog"></i> Settings
               </a>
               <div class="dropdown-divider"></div>
-              <a href="javascript:logout()" class="dropdown-item has-icon text-danger">
+              <a href="auth-login.html" class="dropdown-item has-icon text-danger">
                 <i class="fas fa-sign-out-alt"></i> Logout
               </a>
             </div>
@@ -66,22 +60,26 @@
       <div class="main-sidebar">
         <aside id="sidebar-wrapper">
           <div class="sidebar-brand">
-            <a href="index.html">Diskominfo Jabar</a>
+            <a href="index-0.html">Diskominfo Jabar</a>
           </div>
           <div class="sidebar-brand sidebar-brand-sm">
-            <a href="index.html">DJB</a>
+            <a href="index-0.html">DJB</a>
           </div>
           <ul class="sidebar-menu">
               <li class="menu-header">Dashboard</li>
-              <!-- <li class="nav-item dropdown active">
+              <!-- <li class="nav-item dropdown">
                 <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Dashboard</span></a>
                 <ul class="dropdown-menu">
-                  <li class="active"><a class="nav-link" href="index.html">Data Pengunjung NDA</a></li>
-                  <li class="active"><a class="nav-link" href="index.html">Ecommerce Dashboard</a></li>
+                  <li><a class="nav-link" href="index-0.html">Data Pengunjung NDA</a></li>
+                  <li><a class="nav-link" href="index.html">Ecommerce Dashboard</a></li>
                 </ul>
               </li> -->
-              <!-- <li class="active"><a class="nav-link" href="index.html">Data Pengunjung NDA</a></li> -->
-              <li class="active"><a class="nav-link" href="index.html"><i class="far fa-user"></i> <span>Data Pengunjung</span></a></li>
+              <!-- <li><a class="nav-link" href="index-0.html">Data Pengunjung NDA</a></li> -->
+              <li class="active"><a class="nav-link" href="index.html"><i class="far fa-file-alt"></i> <span>Data Laporan</span></a></li>
+              <li><a class="nav-link" href="insiden-uploader.html"><i class="far fa-file-alt"></i> <span>Insiden</span></a></li>
+              <li><a class="nav-link" href="link-uploader.html"><i class="far fa-file-alt"></i> <span>Opd & Uptd Link</span></a></li>
+              <!-- <li><a class="nav-link" href="insiden-uploader.html"><i class="far fa-file-alt"></i> <span>Insiden</span></a></li>
+              <li><a class="nav-link" href="link-uploader.html"><i class="far fa-file-alt"></i> <span>Opd & Uptd Link</span></a></li> -->
               <!-- <li class="menu-header">Starter</li>
               <li class="nav-item dropdown">
                 <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fas fa-columns"></i> <span>Layout</span></a>
@@ -215,32 +213,72 @@
                 </ul>
               </li>
               <li><a class="nav-link" href="credits.html"><i class="fas fa-pencil-ruler"></i> <span>Credits</span></a></li>-->
-            </ul>         </aside>
+            </ul> 
+
+            <!-- <div class="mt-4 mb-4 p-3 hide-sidebar-mini">
+              <a href="https://getstisla.com/docs" class="btn btn-primary btn-lg btn-block btn-icon-split">
+                <i class="fas fa-rocket"></i> Documentation
+              </a>
+            </div> -->
+        </aside>
       </div>
 
       <!-- Main Content -->
       <div class="main-content">
-  <!-- loading overlay section -->
-  <div class="loading" id="overlay" hidden>Loading&#8230;</div>
-  <!-- loading overlay section -->
-  <section class="section">
-    <div class="section-header">
-      <h1>Data Pengunjung NDA</h1>
-    </div>
-
-    <h2 class="section-title">Tabel Pengunjung</h2>
-      <div class="row">
-        <div class="col-12">
-          <div class="card">
-            <div class="card-header">
-              <a href="nda-form-input.html" class="btn btn-primary">Tambah Data Pengunjung</a>
-            </div>
-            <div class="card-body" id="table-here">
+        <!-- loading overlay section -->
+        <div class="loading" id="overlay" hidden>Loading&#8230;</div>
+        <!-- loading overlay section -->
+        <section class="section">
+          <div class="section-header">
+            <h1>Data Laporan</h1>
+            <div class="section-header-breadcrumb">
+              <!-- <div class="breadcrumb-item active"><a href="#">Dashboard</a></div>
+              <div class="breadcrumb-item"><a href="#">Modules</a></div> -->
+              <div class="breadcrumb-item" active>Data Laporan</div>
             </div>
           </div>
-        </div>
-      </div>
-  </section>
+
+          <div class="section-body">
+            <h2 class="section-title">Preview Data Laporan</h2>            
+            <form action="" id="report-form">
+              <div class="row">
+                <div class="col-12">
+                  <div class="card" style="height: 300px;">
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="form-group col-4 col-lg-4 col-md-4 col-sm-4">
+                          <label>OPD</label>
+                          <select class="form-control" id="selectOpd" data-dropup-auto="false" onchange="getDataUptd(this.options[this.selectedIndex].value)"  placholder="--Select Data--" required>
+                            <option value="" selected>--Select--</option>  
+                            <option value="all">Select All</option>
+                          </select>
+                        </div>
+                        <div class="form-group col-4 col-lg-4 col-md-4 col-sm-4">
+                          <label>UPTD</label>
+                          <select class="form-control" id="selectUptd" data-dropup-auto="false" placholder="--Select Data--" required disabled>
+                            <option value="" selected>--Select--</option>                              
+                            <option value="none">None</option>
+                          </select>
+                        </div>
+                        <div class="form-group col-2 col-lg-2 col-md-2 col-sm-2">
+                          <div class="selectgroup selectgroup-pills" style="margin-top: 30px;">
+                            <div class="form-group">
+                                <a href="javascript:;" class="btn btn-primary daterange-btn icon-left btn-icon" style="width: 144px;"><i class="fas fa-calendar"></i> Choose Date
+                                </a>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="form-group col-1 col-lg-1 col-md-1 col-sm-1">
+                          <button class="btn btn-sm btn-primary" id="submitForm" type="submit" style="padding: .23rem 2.9rem; margin-top: 31px;">Export</button>
+                        </div>              
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </section>
       </div>
       <footer class="main-footer">
         <div class="footer-left">
@@ -262,20 +300,15 @@
   <script src="../assets/js/stisla.js"></script>
 
   <!-- JS Libraies -->
-  <script src="../node_modules/datatables/media/js/jquery.dataTables.min.js"></script>
-  <script src="../node_modules/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-  <script src="../node_modules/datatables.net-select-bs4/js/select.bootstrap4.min.js"></script>
-  <script src="../node_modules/izitoast/dist/js/iziToast.min.js"></script>
-
-  <script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
+  <script src="../node_modules/select2/dist/js/select2.full.min.js"></script>
   <script src="../node_modules/selectric/public/jquery.selectric.min.js"></script>
-  <script src="../node_modules/jquery_upload_preview/assets/js/jquery.uploadPreview.min.js"></script>
-  <script src="../node_modules/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js"></script>
-
-  <script src="../node_modules/cleave.js/dist/cleave.min.js"></script>
-  <script src="../node_modules/cleave.js/dist/addons/cleave-phone.id.js"></script>
+  <script src="../node_modules/izitoast/dist/js/iziToast.min.js"></script>
   <script src="../node_modules/bootstrap-daterangepicker/daterangepicker.js"></script>
   <script src="../node_modules/bootstrap-timepicker/js/bootstrap-timepicker.min.js"></script>
+
+
+  <script src="../node_modules/bootstrap-timepicker/js/bootstrap-timepicker.min.js"></script>
+  <script src="../node_modules/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js"></script>
   <script src="../node_modules/select2/dist/js/select2.full.min.js"></script>
 
   <!-- Template JS File -->
@@ -284,6 +317,5 @@
 
   <!-- Page Specific JS File -->
   <script src="../assets/js/page/index.js"></script>
-  <script type="text/javascript" src="/env.json"></script>
 </body>
 </html>

@@ -1,6 +1,10 @@
 "use strict";
 
 var urlData = ''
+var start_date = ''
+var end_date = ''
+var dt_after_isp = ''
+var dt_month = ''
 window.onload = function() {
   if(document.cookie.length > 0 )
   {
@@ -8,9 +12,9 @@ window.onload = function() {
         .then(response => response.json())
         .then(json => urlData = json[0].local_url)
         .then(function(){
-          getData(urlData)
+          getDataOpd(urlData)
         });
-  }
+    }
   else{
     location.replace("auth-login.html")
   }
@@ -22,12 +26,13 @@ const getCookie = (cookie_name) =>{
   try{
     return document.cookie.match(re)[0];	// Will raise TypeError if cookie is not found
   }catch{
-    return "this-cookie-doesn't-exist";
+    return "Who Are You?";
   }
 }
-async function getData(urlData){
+
+async function getDataOpd(urlData){
   await $.ajax({
-    url: urlData + 'guest/getAll',
+    url: urlData + 'report/get-opd-name',
     type: 'GET',
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
@@ -37,64 +42,12 @@ async function getData(urlData){
         document.getElementById("overlay").removeAttribute("hidden");
     },
     success: function (result) {      
-      var headTable = `
-      <div class="table-responsive">
-        <table class="table table-striped" id="table-1">
-          <thead>
-            <tr>
-              <th>Nama</th>
-              <th>Instansi</th>
-              <th style="text-align:center">Waktu Kedatangan</th>
-              <th style="text-align:center">Waktu Kepulangan</th>
-              <th style="text-align:center">Status</th>
-              <th class="text-center">Action</th>
-            </tr>
-          </thead>
-          <tbody id="nda-data">
-      `;
-      var tailTable = `
-          </tbody>
-        </table>
-      </div>
-      `;
-      var listData = '';
       if(result.data.length > 0)
         result.data.forEach((element, index) => {
-          listData += `
-            ${element.active? `
-            <tr>
-              <td>${element.name}</td>
-              <td>${element.institution}</td>
-              <td style="text-align: center">${element.arrivalTime}</td>
-              <td style="text-align: center">${element.departureTime == null || element.departureTime == 'None'? "-" : element.departureTime}</td>
-              <td>${element.departureTime == null || element.departureTime == 'None' ? 
-                '<div class="badge badge-warning">In Progress</div>' : '<div class="badge badge-success">Completed</div>'}
-              </td>
-              <td>
-                <div class="buttons">
-                ${getCookie("role") == "true" ? `<button class="btn btn-primary btn-sm btn-icon mr-2" id="detailBtn" data-toggle="tooltip" title="Export PDF" onClick="guestById(${element.id})"><i class="fas fa-list-alt fa-sm" style=" color:white"></i></button>
-                <button class="btn btn-info btn-sm btn-icon  mr-1" id="editBTn" data-toggle="tooltip" title="Edit" data-original-title="Edit" onClick="openEditForm(${element.id})"><i class="fas fa-pencil-alt fa-sm" style=" color:white"></i></button>
-                <button class="btn btn-danger btn-sm btn-icon" data-toggle="tooltip" title="Delete" onClick="deleteNDA(${element.id})"><i class="fas fa-trash fa-sm" style=" color:white"></i></button>` : 
-                `<button class="btn btn-primary btn-sm btn-icon mr-2" id="detailBtn" data-toggle="tooltip" title="Export PDF" onClick="guestById(${element.id})"><i class="fas fa-list-alt fa-sm" style=" color:white"></i></button>
-                <button class="btn btn-info btn-sm btn-icon  mr-1" id="editBTn" data-toggle="tooltip" title="Edit" data-original-title="Edit" onClick="openEditForm(${element.id})"><i class="fas fa-pencil-alt fa-sm" style=" color:white"></i></button>`}
-                </div>
-              </td>
-            </tr>
-              ` : ''}
-          `
+          $('#selectOpd').append(`<option value="${element.id}">${element.name}</option>`);
         }); 
-      document.getElementById('table-here').innerHTML = headTable + listData + tailTable; 
     },
     complete: function () {
-      $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-      })
-
-      $("#table-1").dataTable({
-        "columnDefs": [
-          { "sortable": false, "targets": [] }
-        ]
-      });
       document.getElementById("overlay").setAttribute("hidden", false);
     },
     error: function (xhr, status, p3, p4) {
@@ -111,340 +64,1520 @@ async function getData(urlData){
   });
 }
 
-async function deleteNDA(id){
-  var result = confirm("Are you sure to delete this data?");
-  if (result) 
-    $.ajax({
-      url: `${urlData}guest/deleteGuest/` + id,
-      type: 'PUT',
-      contentType: 'application/json',
-      headers: {
-        "Authorization": getCookie("session")
-      },
-      data: JSON.stringify({
-                "active" : false
-              }),
-      beforeSend: function () {
-          document.getElementById("overlay").removeAttribute("hidden");
-      },
-      success: function (result) {
-        iziToast.info({
-          title: 'Delete Successfully',
-          message: `${result.message}`,
-          position: 'topRight'
-        })
-      },
-      complete: function (responseJSON) {
-        document.getElementById("overlay").setAttribute("hidden", false);
-        setTimeout(() => {
-          window.location.reload();
-        }, 5000)
-      },
-      error: function (xhr, status, p3, p4) {
-          var err = "Error " + " " + status + " " + p3 + " " + p4;
-          if (xhr.responseText && xhr.responseText[0] == "{")
-              err = JSON.parse(xhr.responseText).Message;
-          iziToast.error({
-            title: 'Delete Data Unsuccessfully',
-            message: `${err}`,
-            position: 'topRight'
-          })
-          setTimeout(() => {
-            window.location.reload();
-          }, 5000)
-          return false;
-      }
-    });
-}
-
-function openEditForm(id){
-  $.ajax({
-    url: `${urlData}guest/getGuest/` + id, //ambil data sesuai id
+async function getDataUptd(id){
+  await $.ajax({
+    url: urlData + 'report/get-uptd-name/' + id,
     type: 'GET',
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
       "Authorization": getCookie("session")
     },
-    processData: false,
     beforeSend: function () {
         document.getElementById("overlay").removeAttribute("hidden");
+        $('#selectUptd').prop("disabled", false); // Element(s) are now enabled.
     },
-    success: function (result) {
-      window.localStorage.setItem("id",`${result.data.id}`);
-      location.replace("nda-form-edit.html")
+    success: function (result) {       
+      if(result.data.length > 0 && id != "all")
+      {
+        $('#selectUptd').empty()
+        $('#selectUptd').append(`<option value="">--Select--</option>`);
+        $('#selectUptd').append(`<option value="all">Select All</option>`);
+        $('#selectUptd').append(`<option value="none">None</option>`); 
+        result.data.forEach((element, index) => {
+          $('#selectUptd').append(`<option value="${element.id}">${element.name}</option>`);
+        }); 
+      }
+      else if(result.data.length <= 0 && id != "all"){
+        $('#selectUptd').empty()
+        $('#selectUptd').append(`<option value="">--Select--</option>`);
+        $('#selectUptd').append(`<option value="none">None</option>`);
+      }else if(id == "all"){
+        $('#selectUptd').empty()
+        $('#selectUptd').append(`<option value="">--Select--</option>`);
+        $('#selectUptd').append(`<option value="all">Select All</option>`);
+        $('#selectUptd').append(`<option value="none">None</option>`); 
+      }
+      
     },
-    complete: function (responseJSON) {
+    complete: function (responseJSON) {      
       document.getElementById("overlay").setAttribute("hidden", false);
     },
     error: function (xhr, status, p3, p4) {
-      document.getElementById("overlay").setAttribute("hidden", false);
-      var err = "Error " + " " + status + " " + p3 + " " + p4;
-      if (xhr.responseText && xhr.responseText[0] == "{")
-          err = JSON.parse(xhr.responseText).Message;
-      iziToast.error({
-        title: 'Open Form Data Unsuccessfully',
-        message: `${err}`,
-        position: 'topRight'
-      })
-      return false;
+        var err = "Error " + " " + status + " " + p3 + " " + p4;
+        if (xhr.responseText && xhr.responseText[0] == "{")
+            err = JSON.parse(xhr.responseText).Message;
+        iziToast.error({
+          title: 'Gagal load data',
+          message: `${err}`,
+          position: 'topRight'
+        })
+        return false;
     }
-  });  
+  });
 }
 
-function editFormData(id){
-  $('#editFormData').on("submit", function(e){
-    e.preventDefault()
-    var nama = document.getElementById('nameEdit').value
-    var email = document.getElementById('emailEdit').value
-    var nik = document.getElementById('nikEdit').value
-    var instansi =  document.getElementById('instansiEdit').value
-    var phone =  document.getElementById('phonenumberEdit').value
-    var kepKunjungan =  document.getElementById('kepKunjunganEdit').value
-    var wKedatangan =  document.getElementById('waktukedatanganEdit').value
-    var wKepulangan =  document.getElementById('waktukepulanganEdit').value
-    // var ktpImage =  document.getElementById('waktukepulanganEdit').value
-    // var signImage =  document.getElementById('waktukepulanganEdit').value
-    //Obj of data to send in future like a dummyDb
+const exampleForm = document.getElementById("report-form");
+exampleForm.addEventListener("submit", function(e){  
+  const opd_param = document.getElementById("selectOpd").value
+  const uptd_param = document.getElementById("selectUptd").value
+  e.preventDefault();
+  const data = { 
+    opd_param:opd_param.toString(),
+    uptd_param:uptd_param.toString(),
+    start_date:start_date,
+    end_date:end_date
+  };
 
-    const data = { 
-      name:nama.toUpperCase(),
-      email:email,
-      nik:String(nik),
-      institution:instansi.toUpperCase(),
-      phoneNumber:String(phone).trim(),
-      visitReason:kepKunjungan,
-      arrivalTime:wKedatangan,
-      departureTime:wKepulangan,
-      ktpImage:ktpImgName, //
-      signImage:ttdImage
-    };
+  var content = ''
+  var contentuptd = ''
 
-    $.ajax({
-    url: `${urlData}/guest/update/` + id,
-    type: 'PUT',
+  $.ajax({
+    url: `${urlData}report/get-opd`,
+    type: 'POST',
     data: JSON.stringify(data),
+    datatype: 'json',
     contentType: 'application/json',
     headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
       "Authorization": getCookie("session")
     },
     beforeSend: function () {
-        document.getElementById("overlay").removeAttribute("hidden");
+      document.getElementById("overlay").removeAttribute("hidden"); 
     },
     success: function (result) {
         // element is div holding the ParticalView
-        $('#editUserModal').modal('hide');
-        document.getElementById("overlay").setAttribute("hidden", false);
-        iziToast.success({
-          title: 'Update Data Successfully',
-          message: `Data with name ${result.name} has been updated`,
-          position: 'topRight'
-        })
+        
+        // setTimeout(() => {
+        //   window.location.replace("index.html")
+        // }, 3000)
+        if(Array.isArray(result.data) == false){
+          var element = result.data
+          var elementuptd = element.uptd_list
+          content = 
+          `          
+            <div>
+                <header>
+                  <p align='center' style='font-family: Arial; font-size: 18.6px; margin-bottom: 5px'>
+                    <b>${element.name}</b>
+                  </p>
+                  <p align='center' style='font-family: Arial; font-size: 14px; margin-top: 0px; margin-bottom: 5px;'>
+                    ${element.address}
+                  </p>
+                  <p align='center' style='font-family: Arial; font-size: 14px; margin-top: 0px; margin-bottom:5px'>
+                    PIC : ${element.pic} – Telp : ${element.phone_number}
+                  </p>
+                  <p align='center' style='font-family: Arial; font-size: 14px; margin:0; padding:0;'>
+                    LAPORAN BULAN ${dt_month.toUpperCase()}
+                  </p>
+              </header>
+
+              <body>
+              ${element.opd_link.length > 0 ? `
+                  <table style='font-family: Arial; font-size: 14px; text-align: left; width: 100%; height: 100%;'>
+                    <tbody>
+                      ${element.opd_link[0] != null ? `
+                          <tr>
+                            <td colspan='3'>
+                              <b>1. ${element.opd_link[0].isp == null ? 'Data not found' : element.opd_link[0].isp}</b>
+                            </td>
+                          </tr>
+                          <tr class='spaceUnder'>
+                            <td style='width: 50%; middle-align: top;'>
+                              <img src='${element.opd_link[0].graph == null ? 'Data not found' : element.opd_link[0].graph}' alt='Graphic Image'>
+                            </td>
+                            <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
+                              Pemakaian Selama <br>${dt_month}
+                              <br>
+                              <table style='border: 0.5px solid black; border-collapse: collapse; width: 70%'>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Bandwidth</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>${element.opd_link[0].bandwith == null ? 'Data not found' : element.opd_link[0].bandwith} Mbps</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Max</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>${element.opd_link[0].max_speed == null ? 'Data not found' : element.opd_link[0].max_speed}</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Min</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>${element.opd_link[0].min_speed == null ? 'Data not found' : element.opd_link[0].min_speed}</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Rerata</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>${element.opd_link[0].speed_average == null ? 'Data not found' : element.opd_link[0].speed_average}</td>
+                                </tr>
+                              </table>
+                            </td>
+                            <td class='spacing' style='width: 30%; vertical-align: top;'>
+                              Akses Situs Terbanyak
+                              <br>
+                              <br>
+                              <table style='border: 0.5px solid black; border-collapse: collapse; width: 100%'>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Google.com</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>2165 kali</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>zoom.us</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>2150 kali</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>youtube.com</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>2100 kali</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>siap.jabarprov.go.id</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>2000 kali</td>
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>
+                      
+                      ` : `
+                          <tr>
+                            <td colspan='3'>
+                              <b>1. Data not found</b>
+                            </td>
+                          </tr>
+                          <tr class='spaceUnder'>
+                            <td style='width: 50%; middle-align: top;'>
+                              <img src='' alt='Graphic Image'>
+                            </td>
+                            <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
+                              Pemakaian Selama <br>${dt_month}
+                              <br>
+                              <table style='border: 0.5px solid black; border-collapse: collapse; width: 70%'>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Bandwidth</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>0 Mbps</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Max</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>0 Mbps</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Min</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>0 Mbps</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Rerata</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>0 Mbps</td>
+                                </tr>
+                              </table>
+                            </td>
+                            <td class='spacing' style='width: 30%; vertical-align: top;'>
+                              Akses Situs Terbanyak
+                              <br>
+                              <br>
+                              <table style='border: 0.5px solid black; border-collapse: collapse; width: 100%'>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Google.com</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>2165 kali</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>zoom.us</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>2150 kali</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>youtube.com</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>2100 kali</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>siap.jabarprov.go.id</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>2000 kali</td>
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>                    
+                      `}
+                      
+                      ${element.opd_link[1] != null ? `
+                          <tr>
+                            <td colspan='3'>
+                              <b>2. ${element.opd_link[1].isp == null ? 'Data not found' : element.opd_link[1].isp}</b>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style='width: 50%; middle-align: top;'>
+                              <img src='${element.opd_link[1].graph == null ? '' : element.opd_link[1].graph}', alt='Graphic Image'>
+                            </td>
+                            <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
+                              Pemakaian Selama <br>${dt_month}
+                              <br>
+                              <table style='border: 0.5px solid black; border-collapse: collapse; width: 70%'>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Bandwidth</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>${element.opd_link[1].bandwith == null ? 'Data not found' : element.opd_link[1].bandwith} Mbps</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Max</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>${element.opd_link[1].max_speed == null ? 'Data not found' : element.opd_link[1].max_speed}</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Min</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>${element.opd_link[1].min_speed == null ? 'Data not found' : element.opd_link[1].min_speed}</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Rerata</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>${element.opd_link[1].speed_average == null ? 'Data not found' : element.opd_link[1].speed_average}</td>
+                                </tr>
+                              </table>
+                            </td>
+                            <td class='spacing' style='width: 30%; vertical-align: top;'>
+                              Keluhan Selama ${dt_month}
+                              <br>
+                              <br>
+                              <table style='border: 0.5px solid black; border-collapse: collapse; width: 100%'>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Link Drop</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>5 kali</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Link Unstable</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>10 kali</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Bandwith Drop</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>3 kali</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Gangguan Akses Web</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>4 kali</td>
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>
+                      `:`
+                          <tr>
+                            <td colspan='3'>
+                              <b>2. Data Not Found</b>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style='width: 50%; middle-align: top;'>
+                              <img src='' alt='Image Grpah'>
+                            </td>
+                            <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
+                              Pemakaian Selama <br>${dt_month}
+                              <br>
+                              <table style='border: 0.5px solid black; border-collapse: collapse; width: 70%'>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Bandwidth</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>0 Mbps</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Max</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>0 Mbps</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Min</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>0 Mbps</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Rerata</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>0 Mbps</td>
+                                </tr>
+                              </table>
+                            </td>
+                            <td class='spacing' style='width: 30%; vertical-align: top;'>
+                              Keluhan Selama ${dt_month}
+                              <br>
+                              <br>
+                              <table style='border: 0.5px solid black; border-collapse: collapse; width: 100%'>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Link Drop</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>5 kali</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Link Unstable</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>10 kali</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Bandwith Drop</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>3 kali</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Gangguan Akses Web</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>4 kali</td>
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>
+                      `}
+                    </tbody>
+                  </table>
+              `: ''}
+
+              <p style='font-style:italic'>*data grafik diambil pada tanggal ${dt_after_isp}</p>
+              </body>
+            </div>
+          `
+          if(Array.isArray(elementuptd) == false){
+            contentuptd =  `          
+            <div>
+                <header>
+                  <p align='center' style='font-family: Arial; font-size: 18.6px; margin-bottom: 5px'>
+                    <b>${elementuptd.name}</b>
+                  </p>
+                  <p align='center' style='font-family: Arial; font-size: 14px; margin-top: 0px; margin-bottom: 5px;'>
+                    ${elementuptd.address}
+                  </p>
+                  <p align='center' style='font-family: Arial; font-size: 14px; margin-top: 0px; margin-bottom:5px'>
+                    PIC : ${elementuptd.pic} – Telp : ${elementuptd.phone_number}
+                  </p>
+                  <p align='center' style='font-family: Arial; font-size: 14px; margin:0; padding:0;'>
+                    LAPORAN BULAN ${dt_month.toUpperCase()}
+                  </p>
+              </header>
+
+              <body>
+              ${elementuptd.uptd_link.length > 0 ? `
+                  <table style='font-family: Arial; font-size: 14px; text-align: left; width: 100%; height: 100%;'>
+                    <tbody>
+                      ${elementuptd.uptd_link[0] != null ? `
+                          <tr>
+                            <td colspan='3'>
+                              <b>1. ${elementuptd.uptd_link[0].isp == null ? 'Data not found' : elementuptd.uptd_link[0].isp}</b>
+                            </td>
+                          </tr>
+                          <tr class='spaceUnder'>
+                            <td style='width: 50%; middle-align: top;'>
+                              <img src='${elementuptd.uptd_link[0].graph == null ? 'Data not found' : elementuptd.uptd_link[0].graph}' alt='Graphic Image'>
+                            </td>
+                            <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
+                              Pemakaian Selama <br>${dt_month}
+                              <br>
+                              <table style='border: 0.5px solid black; border-collapse: collapse; width: 70%'>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Bandwidth</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>${elementuptd.uptd_link[0].bandwith == null ? 'Data not found' : elementuptd.uptd_link[0].bandwith} Mbps</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Max</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>${elementuptd.uptd_link[0].max_speed == null ? 'Data not found' : elementuptd.uptd_link[0].max_speed}</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Min</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>${elementuptd.uptd_link[0].min_speed == null ? 'Data not found' : elementuptd.uptd_link[0].min_speed}</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Rerata</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>${elementuptd.uptd_link[0].speed_average == null ? 'Data not found' : elementuptd.uptd_link[0].speed_average}</td>
+                                </tr>
+                              </table>
+                            </td>
+                            <td class='spacing' style='width: 30%; vertical-align: top;'>
+                              Akses Situs Terbanyak
+                              <br>
+                              <br>
+                              <table style='border: 0.5px solid black; border-collapse: collapse; width: 100%'>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Google.com</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>2165 kali</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>zoom.us</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>2150 kali</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>youtube.com</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>2100 kali</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>siap.jabarprov.go.id</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>2000 kali</td>
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>
+                      
+                      ` : `
+                          <tr>
+                            <td colspan='3'>
+                              <b>1. Data not found</b>
+                            </td>
+                          </tr>
+                          <tr class='spaceUnder'>
+                            <td style='width: 50%; middle-align: top;'>
+                              <img src='' alt='Graphic Image'>
+                            </td>
+                            <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
+                              Pemakaian Selama <br>${dt_month}
+                              <br>
+                              <table style='border: 0.5px solid black; border-collapse: collapse; width: 70%'>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Bandwidth</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>0 Mbps</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Max</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>0 Mbps</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Min</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>0 Mbps</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Rerata</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>0 Mbps</td>
+                                </tr>
+                              </table>
+                            </td>
+                            <td class='spacing' style='width: 30%; vertical-align: top;'>
+                              Akses Situs Terbanyak
+                              <br>
+                              <br>
+                              <table style='border: 0.5px solid black; border-collapse: collapse; width: 100%'>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Google.com</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>2165 kali</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>zoom.us</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>2150 kali</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>youtube.com</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>2100 kali</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>siap.jabarprov.go.id</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>2000 kali</td>
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>                    
+                      `}
+                      
+                      ${elementuptd.uptd_link[1] != null ? `
+                          <tr>
+                            <td colspan='3'>
+                              <b>2. ${elementuptd.uptd_link[1].isp == null ? 'Data not found' : elementuptd.uptd_link[1].isp}</b>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style='width: 50%; middle-align: top;'>
+                              <img src='${elementuptd.uptd_link[1].graph == null ? '' : elementuptd.uptd_link[1].graph}', alt='Graphic Image'>
+                            </td>
+                            <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
+                              Pemakaian Selama <br>${dt_month}
+                              <br>
+                              <table style='border: 0.5px solid black; border-collapse: collapse; width: 70%'>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Bandwidth</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>${elementuptd.uptd_link[1].bandwith == null ? 'Data not found' : elementuptd.uptd_link[1].bandwith} Mbps</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Max</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>${elementuptd.uptd_link[1].max_speed == null ? 'Data not found' : elementuptd.uptd_link[1].max_speed}</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Min</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>${elementuptd.uptd_link[1].min_speed == null ? 'Data not found' : elementuptd.uptd_link[1].min_speed}</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Rerata</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>${elementuptd.uptd_link[1].speed_average == null ? 'Data not found' : elementuptd.uptd_link[1].speed_average}</td>
+                                </tr>
+                              </table>
+                            </td>
+                            <td class='spacing' style='width: 30%; vertical-align: top;'>
+                              Keluhan Selama ${dt_month}
+                              <br>
+                              <br>
+                              <table style='border: 0.5px solid black; border-collapse: collapse; width: 100%'>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Link Drop</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>5 kali</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Link Unstable</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>10 kali</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Bandwith Drop</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>3 kali</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Gangguan Akses Web</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>4 kali</td>
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>
+                      `:`
+                          <tr>
+                            <td colspan='3'>
+                              <b>2. Data Not Found</b>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style='width: 50%; middle-align: top;'>
+                              <img src='' alt='Image Grpah'>
+                            </td>
+                            <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
+                              Pemakaian Selama <br>${dt_month}
+                              <br>
+                              <table style='border: 0.5px solid black; border-collapse: collapse; width: 70%'>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Bandwidth</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>0 Mbps</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Max</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>0 Mbps</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Min</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>0 Mbps</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Rerata</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>0 Mbps</td>
+                                </tr>
+                              </table>
+                            </td>
+                            <td class='spacing' style='width: 30%; vertical-align: top;'>
+                              Keluhan Selama ${dt_month}
+                              <br>
+                              <br>
+                              <table style='border: 0.5px solid black; border-collapse: collapse; width: 100%'>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Link Drop</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>5 kali</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Link Unstable</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>10 kali</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Bandwith Drop</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>3 kali</td>
+                                </tr>
+                                <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                  <td style='padding-left: 5px'>Gangguan Akses Web</td>
+                                  <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>4 kali</td>
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>
+                      `}
+                    </tbody>
+                  </table>
+              `: ''}
+
+              <p style='font-style:italic'>*data grafik diambil pada tanggal ${dt_after_isp}</p>
+              </body>
+            </div>
+            `
+          }
+          else if(Array.isArray(elementuptd) == true && elementuptd.length > 0){
+            elementuptd.forEach((element, index) => {
+              contentuptd += `          
+              <div>
+                  <header>
+                    <p align='center' style='font-family: Arial; font-size: 18.6px; margin-bottom: 5px'>
+                      <b>${element.name}</b>
+                    </p>
+                    <p align='center' style='font-family: Arial; font-size: 14px; margin-top: 0px; margin-bottom: 5px;'>
+                      ${element.address}
+                    </p>
+                    <p align='center' style='font-family: Arial; font-size: 14px; margin-top: 0px; margin-bottom:5px'>
+                      PIC : ${element.pic} – Telp : ${element.phone_number}
+                    </p>
+                    <p align='center' style='font-family: Arial; font-size: 14px; margin:0; padding:0;'>
+                      LAPORAN BULAN ${dt_month.toUpperCase()}
+                    </p>
+                </header>
+  
+                <body>
+                ${element.uptd_link.length > 0 ? `
+                    <table style='font-family: Arial; font-size: 14px; text-align: left; width: 100%; height: 100%;'>
+                      <tbody>
+                        ${element.uptd_link[0] != null ? `
+                            <tr>
+                              <td colspan='3'>
+                                <b>1. ${element.uptd_link[0].isp == null ? 'Data not found' : element.uptd_link[0].isp}</b>
+                              </td>
+                            </tr>
+                            <tr class='spaceUnder'>
+                              <td style='width: 50%; middle-align: top;'>
+                                <img src='${element.uptd_link[0].graph == null ? 'Data not found' : element.uptd_link[0].graph}' alt='Graphic Image'>
+                              </td>
+                              <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
+                                Pemakaian Selama <br>${dt_month}
+                                <br>
+                                <table style='border: 0.5px solid black; border-collapse: collapse; width: 70%'>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>Bandwidth</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>${element.uptd_link[0].bandwith == null ? 'Data not found' : element.uptd_link[0].bandwith} Mbps</td>
+                                  </tr>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>Max</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>${element.uptd_link[0].max_speed == null ? 'Data not found' : element.uptd_link[0].max_speed}</td>
+                                  </tr>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>Min</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>${element.uptd_link[0].min_speed == null ? 'Data not found' : element.uptd_link[0].min_speed}</td>
+                                  </tr>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>Rerata</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>${element.uptd_link[0].speed_average == null ? 'Data not found' : element.uptd_link[0].speed_average}</td>
+                                  </tr>
+                                </table>
+                              </td>
+                              <td class='spacing' style='width: 30%; vertical-align: top;'>
+                                Akses Situs Terbanyak
+                                <br>
+                                <br>
+                                <table style='border: 0.5px solid black; border-collapse: collapse; width: 100%'>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>Google.com</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>2165 kali</td>
+                                  </tr>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>zoom.us</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>2150 kali</td>
+                                  </tr>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>youtube.com</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>2100 kali</td>
+                                  </tr>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>siap.jabarprov.go.id</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>2000 kali</td>
+                                  </tr>
+                                </table>
+                              </td>
+                            </tr>
+                        
+                        ` : `
+                            <tr>
+                              <td colspan='3'>
+                                <b>1. Data not found</b>
+                              </td>
+                            </tr>
+                            <tr class='spaceUnder'>
+                              <td style='width: 50%; middle-align: top;'>
+                                <img src='' alt='Graphic Image'>
+                              </td>
+                              <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
+                                Pemakaian Selama <br>${dt_month}
+                                <br>
+                                <table style='border: 0.5px solid black; border-collapse: collapse; width: 70%'>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>Bandwidth</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>0 Mbps</td>
+                                  </tr>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>Max</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>0 Mbps</td>
+                                  </tr>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>Min</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>0 Mbps</td>
+                                  </tr>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>Rerata</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>0 Mbps</td>
+                                  </tr>
+                                </table>
+                              </td>
+                              <td class='spacing' style='width: 30%; vertical-align: top;'>
+                                Akses Situs Terbanyak
+                                <br>
+                                <br>
+                                <table style='border: 0.5px solid black; border-collapse: collapse; width: 100%'>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>Google.com</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>2165 kali</td>
+                                  </tr>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>zoom.us</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>2150 kali</td>
+                                  </tr>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>youtube.com</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>2100 kali</td>
+                                  </tr>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>siap.jabarprov.go.id</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>2000 kali</td>
+                                  </tr>
+                                </table>
+                              </td>
+                            </tr>                    
+                        `}
+                        
+                        ${element.uptd_link[1] != null ? `
+                            <tr>
+                              <td colspan='3'>
+                                <b>2. ${element.uptd_link[1].isp == null ? 'Data not found' : element.uptd_link[1].isp}</b>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style='width: 50%; middle-align: top;'>
+                                <img src='${element.uptd_link[1].graph == null ? '' : element.uptd_link[1].graph}', alt='Graphic Image'>
+                              </td>
+                              <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
+                                Pemakaian Selama <br>${dt_month}
+                                <br>
+                                <table style='border: 0.5px solid black; border-collapse: collapse; width: 70%'>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>Bandwidth</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>${element.uptd_link[1].bandwith == null ? 'Data not found' : element.uptd_link[1].bandwith} Mbps</td>
+                                  </tr>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>Max</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>${element.uptd_link[1].max_speed == null ? 'Data not found' : element.uptd_link[1].max_speed}</td>
+                                  </tr>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>Min</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>${element.uptd_link[1].min_speed == null ? 'Data not found' : element.uptd_link[1].min_speed}</td>
+                                  </tr>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>Rerata</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>${element.uptd_link[1].speed_average == null ? 'Data not found' : element.uptd_link[1].speed_average}</td>
+                                  </tr>
+                                </table>
+                              </td>
+                              <td class='spacing' style='width: 30%; vertical-align: top;'>
+                                Keluhan Selama ${dt_month}
+                                <br>
+                                <br>
+                                <table style='border: 0.5px solid black; border-collapse: collapse; width: 100%'>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>Link Drop</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>5 kali</td>
+                                  </tr>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>Link Unstable</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>10 kali</td>
+                                  </tr>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>Bandwith Drop</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>3 kali</td>
+                                  </tr>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>Gangguan Akses Web</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>4 kali</td>
+                                  </tr>
+                                </table>
+                              </td>
+                            </tr>
+                        `:`
+                            <tr>
+                              <td colspan='3'>
+                                <b>2. Data Not Found</b>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style='width: 50%; middle-align: top;'>
+                                <img src='' alt='Image Grpah'>
+                              </td>
+                              <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
+                                Pemakaian Selama <br>${dt_month}
+                                <br>
+                                <table style='border: 0.5px solid black; border-collapse: collapse; width: 70%'>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>Bandwidth</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>0 Mbps</td>
+                                  </tr>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>Max</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>0 Mbps</td>
+                                  </tr>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>Min</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>0 Mbps</td>
+                                  </tr>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>Rerata</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>0 Mbps</td>
+                                  </tr>
+                                </table>
+                              </td>
+                              <td class='spacing' style='width: 30%; vertical-align: top;'>
+                                Keluhan Selama ${dt_month}
+                                <br>
+                                <br>
+                                <table style='border: 0.5px solid black; border-collapse: collapse; width: 100%'>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>Link Drop</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>5 kali</td>
+                                  </tr>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>Link Unstable</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>10 kali</td>
+                                  </tr>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>Bandwith Drop</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>3 kali</td>
+                                  </tr>
+                                  <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                    <td style='padding-left: 5px'>Gangguan Akses Web</td>
+                                    <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>4 kali</td>
+                                  </tr>
+                                </table>
+                              </td>
+                            </tr>
+                        `}
+                      </tbody>
+                    </table>
+                `: ''}
+  
+                <p style='font-style:italic'>*data grafik diambil pada tanggal ${dt_after_isp}</p>
+                </body>
+              </div>
+              `
+            });
+          }
+        }
+        else if(Array.isArray(result.data) == true && result.data.length > 0)
+        {
+          result.data.forEach((element, index) => {
+            content += `
+            <div>
+              <header>
+                <p align='center' style='font-family: Arial; font-size: 18.6px; margin-bottom: 5px'>
+                  <b>${element.name}</b>
+                </p>
+                <p align='center' style='font-family: Arial; font-size: 14px; margin-top: 0px; margin-bottom: 5px;'>
+                  ${element.address}
+                </p>
+                <p align='center' style='font-family: Arial; font-size: 14px; margin-top: 0px; margin-bottom:5px'>
+                  PIC : ${element.pic} – Telp : ${element.phone_number}
+                </p>
+                <p align='center' style='font-family: Arial; font-size: 14px; margin:0; padding:0;'>
+                  LAPORAN BULAN ${dt_month.toUpperCase()}
+                </p>
+              </header>
+  
+              <body>
+              ${element.opd_link.length > 0 ? `
+                  <table style='font-family: Arial; font-size: 14px; text-align: left; width: 100%; height: 100%;'>
+                    <tbody>
+                    ${element.opd_link[0] != null ? `
+                    <tr>
+                      <td colspan='3'>
+                        <b>1. ${element.opd_link[0].isp == null ? 'Data not found' : element.opd_link[0].isp}</b>
+                      </td>
+                    </tr>
+                    <tr class='spaceUnder'>
+                      <td style='width: 50%; middle-align: top;'>
+                        <img src='${element.opd_link[0].graph == null ? 'Data not found' : element.opd_link[0].graph}'>
+                      </td>
+                      <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
+                        Pemakaian Selama <br>${dt_month}
+                        <br>
+                        <table style='border: 0.5px solid black; border-collapse: collapse; width: 70%'>
+                          <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                            <td style='padding-left: 5px'>Bandwidth</td>
+                            <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>${element.opd_link[0].bandwith == null ? 'Data not found' : element.opd_link[0].bandwith} Mbps</td>
+                          </tr>
+                          <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                            <td style='padding-left: 5px'>Max</td>
+                            <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>${element.opd_link[0].max_speed == null ? 'Data not found' : element.opd_link[0].max_speed}</td>
+                          </tr>
+                          <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                            <td style='padding-left: 5px'>Min</td>
+                            <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>${element.opd_link[0].min_speed == null ? 'Data not found' : element.opd_link[0].min_speed}</td>
+                          </tr>
+                          <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                            <td style='padding-left: 5px'>Rerata</td>
+                            <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>${element.opd_link[0].speed_average == null ? 'Data not found' : element.opd_link[0].speed_average}</td>
+                          </tr>
+                        </table>
+                      </td>
+                      <td class='spacing' style='width: 30%; vertical-align: top;'>
+                        Akses Situs Terbanyak
+                        <br>
+                        <br>
+                        <table style='border: 0.5px solid black; border-collapse: collapse; width: 100%'>
+                          <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                            <td style='padding-left: 5px'>Google.com</td>
+                            <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>2165 kali</td>
+                          </tr>
+                          <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                            <td style='padding-left: 5px'>zoom.us</td>
+                            <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>2150 kali</td>
+                          </tr>
+                          <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                            <td style='padding-left: 5px'>youtube.com</td>
+                            <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>2100 kali</td>
+                          </tr>
+                          <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                            <td style='padding-left: 5px'>siap.jabarprov.go.id</td>
+                            <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>2000 kali</td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                
+                      ` : `
+                        <tr>
+                          <td colspan='3'>
+                            <b>1. Data not found</b>
+                          </td>
+                        </tr>
+                        <tr class='spaceUnder'>
+                          <td style='width: 50%; middle-align: top;'>
+                            <img src='' alt='Graphic Image'>
+                          </td>
+                          <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
+                            Pemakaian Selama <br>${dt_month}
+                            <br>
+                            <table style='border: 0.5px solid black; border-collapse: collapse; width: 70%'>
+                              <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                <td style='padding-left: 5px'>Bandwidth</td>
+                                <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>0 Mbps</td>
+                              </tr>
+                              <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                <td style='padding-left: 5px'>Max</td>
+                                <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>0 Mbps</td>
+                              </tr>
+                              <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                <td style='padding-left: 5px'>Min</td>
+                                <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>0 Mbps</td>
+                              </tr>
+                              <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                <td style='padding-left: 5px'>Rerata</td>
+                                <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>0 Mbps</td>
+                              </tr>
+                            </table>
+                          </td>
+                          <td class='spacing' style='width: 30%; vertical-align: top;'>
+                            Akses Situs Terbanyak
+                            <br>
+                            <br>
+                            <table style='border: 0.5px solid black; border-collapse: collapse; width: 100%'>
+                              <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                <td style='padding-left: 5px'>Google.com</td>
+                                <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>2165 kali</td>
+                              </tr>
+                              <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                <td style='padding-left: 5px'>zoom.us</td>
+                                <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>2150 kali</td>
+                              </tr>
+                              <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                <td style='padding-left: 5px'>youtube.com</td>
+                                <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>2100 kali</td>
+                              </tr>
+                              <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                <td style='padding-left: 5px'>siap.jabarprov.go.id</td>
+                                <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>2000 kali</td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>                    
+                    `}
+                
+                    ${element.opd_link[1] != null ? `
+                        <tr>
+                          <td colspan='3'>
+                            <b>2. ${element.opd_link[1].isp == null ? 'Data not found' : element.opd_link[1].isp}</b>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style='width: 50%; middle-align: top;'>
+                            <img src='${element.opd_link[1].graph == null ? '' : element.opd_link[1].graph}' alt='Graphic Image'>
+                          </td>
+                          <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
+                            Pemakaian Selama <br>${dt_month}
+                            <br>
+                            <table style='border: 0.5px solid black; border-collapse: collapse; width: 70%'>
+                              <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                <td style='padding-left: 5px'>Bandwidth</td>
+                                <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>${element.opd_link[1].bandwith == null ? 'Data not found' : element.opd_link[1].bandwith} Mbps</td>
+                              </tr>
+                              <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                <td style='padding-left: 5px'>Max</td>
+                                <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>${element.opd_link[1].max_speed == null ? 'Data not found' : element.opd_link[1].max_speed}</td>
+                              </tr>
+                              <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                <td style='padding-left: 5px'>Min</td>
+                                <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>${element.opd_link[1].min_speed == null ? 'Data not found' : element.opd_link[1].min_speed}</td>
+                              </tr>
+                              <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                <td style='padding-left: 5px'>Rerata</td>
+                                <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>${element.opd_link[1].speed_average == null ? 'Data not found' : element.opd_link[1].speed_average}</td>
+                              </tr>
+                            </table>
+                          </td>
+                          <td class='spacing' style='width: 30%; vertical-align: top;'>
+                            Keluhan Selama ${dt_month.toUpperCase()}
+                            <br>
+                            <br>
+                            <table style='border: 0.5px solid black; border-collapse: collapse; width: 100%'>
+                              <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                <td style='padding-left: 5px'>Link Drop</td>
+                                <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>5 kali</td>
+                              </tr>
+                              <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                <td style='padding-left: 5px'>Link Unstable</td>
+                                <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>10 kali</td>
+                              </tr>
+                              <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                <td style='padding-left: 5px'>Bandwith Drop</td>
+                                <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>3 kali</td>
+                              </tr>
+                              <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                <td style='padding-left: 5px'>Gangguan Akses Web</td>
+                                <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>4 kali</td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      `:`
+                        <tr>
+                          <td colspan='3'>
+                            <b>2. Data Not Found</b>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style='width: 50%; middle-align: top;'>
+                            <img src='' alt='Image Grpah'>
+                          </td>
+                          <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
+                            Pemakaian Selama <br>${dt_month}
+                            <br>
+                            <table style='border: 0.5px solid black; border-collapse: collapse; width: 70%'>
+                              <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                <td style='padding-left: 5px'>Bandwidth</td>
+                                <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>0 Mbps</td>
+                              </tr>
+                              <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                <td style='padding-left: 5px'>Max</td>
+                                <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>0 Mbps</td>
+                              </tr>
+                              <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                <td style='padding-left: 5px'>Min</td>
+                                <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>0 Mbps</td>
+                              </tr>
+                              <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                <td style='padding-left: 5px'>Rerata</td>
+                                <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>0 Mbps</td>
+                              </tr>
+                            </table>
+                          </td>
+                          <td class='spacing' style='width: 30%; vertical-align: top;'>
+                            Keluhan Selama ${dt_month}
+                            <br>
+                            <br>
+                            <table style='border: 0.5px solid black; border-collapse: collapse; width: 100%'>
+                              <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                <td style='padding-left: 5px'>Link Drop</td>
+                                <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>5 kali</td>
+                              </tr>
+                              <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                <td style='padding-left: 5px'>Link Unstable</td>
+                                <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>10 kali</td>
+                              </tr>
+                              <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                <td style='padding-left: 5px'>Bandwith Drop</td>
+                                <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>3 kali</td>
+                              </tr>
+                              <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                <td style='padding-left: 5px'>Gangguan Akses Web</td>
+                                <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>4 kali</td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                    `}
+                    </tbody>
+                  </table>
+              `: ''}
+              </body>
+            </div>
+            `
+            if(Array.isArray(element.uptd_list) == true && element.uptd_list.length > 0){
+              element.uptd_list.forEach((element, index) => {
+                content += `          
+                <div>
+                    <header>
+                      <p align='center' style='font-family: Arial; font-size: 18.6px; margin-bottom: 5px'>
+                        <b>${element.name}</b>
+                      </p>
+                      <p align='center' style='font-family: Arial; font-size: 14px; margin-top: 0px; margin-bottom: 5px;'>
+                        ${element.address}
+                      </p>
+                      <p align='center' style='font-family: Arial; font-size: 14px; margin-top: 0px; margin-bottom:5px'>
+                        PIC : ${element.pic} – Telp : ${element.phone_number}
+                      </p>
+                      <p align='center' style='font-family: Arial; font-size: 14px; margin:0; padding:0;'>
+                        LAPORAN BULAN ${dt_month.toUpperCase()}
+                      </p>
+                  </header>
+    
+                  <body>
+                  ${element.uptd_link.length > 0 ? `
+                      <table style='font-family: Arial; font-size: 14px; text-align: left; width: 100%; height: 100%;'>
+                        <tbody>
+                          ${element.uptd_link[0] != null ? `
+                              <tr>
+                                <td colspan='3'>
+                                  <b>1. ${element.uptd_link[0].isp == null ? 'Data not found' : element.uptd_link[0].isp}</b>
+                                </td>
+                              </tr>
+                              <tr class='spaceUnder'>
+                                <td style='width: 50%; middle-align: top;'>
+                                  <img src='${element.uptd_link[0].graph == null ? 'Data not found' : element.uptd_link[0].graph}' alt='Graphic Image'>
+                                </td>
+                                <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
+                                  Pemakaian Selama <br>${dt_month}
+                                  <br>
+                                  <table style='border: 0.5px solid black; border-collapse: collapse; width: 70%'>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>Bandwidth</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>${element.uptd_link[0].bandwith == null ? 'Data not found' : element.uptd_link[0].bandwith} Mbps</td>
+                                    </tr>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>Max</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>${element.uptd_link[0].max_speed == null ? 'Data not found' : element.uptd_link[0].max_speed}</td>
+                                    </tr>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>Min</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>${element.uptd_link[0].min_speed == null ? 'Data not found' : element.uptd_link[0].min_speed}</td>
+                                    </tr>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>Rerata</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>${element.uptd_link[0].speed_average == null ? 'Data not found' : element.uptd_link[0].speed_average}</td>
+                                    </tr>
+                                  </table>
+                                </td>
+                                <td class='spacing' style='width: 30%; vertical-align: top;'>
+                                  Akses Situs Terbanyak
+                                  <br>
+                                  <br>
+                                  <table style='border: 0.5px solid black; border-collapse: collapse; width: 100%'>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>Google.com</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>2165 kali</td>
+                                    </tr>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>zoom.us</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>2150 kali</td>
+                                    </tr>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>youtube.com</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>2100 kali</td>
+                                    </tr>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>siap.jabarprov.go.id</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>2000 kali</td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
+                          
+                          ` : `
+                              <tr>
+                                <td colspan='3'>
+                                  <b>1. Data not found</b>
+                                </td>
+                              </tr>
+                              <tr class='spaceUnder'>
+                                <td style='width: 50%; middle-align: top;'>
+                                  <img src='' alt='Graphic Image'>
+                                </td>
+                                <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
+                                  Pemakaian Selama <br>${dt_month}
+                                  <br>
+                                  <table style='border: 0.5px solid black; border-collapse: collapse; width: 70%'>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>Bandwidth</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>0 Mbps</td>
+                                    </tr>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>Max</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>0 Mbps</td>
+                                    </tr>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>Min</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>0 Mbps</td>
+                                    </tr>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>Rerata</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>0 Mbps</td>
+                                    </tr>
+                                  </table>
+                                </td>
+                                <td class='spacing' style='width: 30%; vertical-align: top;'>
+                                  Akses Situs Terbanyak
+                                  <br>
+                                  <br>
+                                  <table style='border: 0.5px solid black; border-collapse: collapse; width: 100%'>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>Google.com</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>2165 kali</td>
+                                    </tr>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>zoom.us</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>2150 kali</td>
+                                    </tr>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>youtube.com</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>2100 kali</td>
+                                    </tr>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>siap.jabarprov.go.id</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>2000 kali</td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>                    
+                          `}
+                          
+                          ${element.uptd_link[1] != null ? `
+                              <tr>
+                                <td colspan='3'>
+                                  <b>2. ${element.uptd_link[1].isp == null ? 'Data not found' : element.uptd_link[1].isp}</b>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style='width: 50%; middle-align: top;'>
+                                  <img src='${element.uptd_link[1].graph == null ? '' : element.uptd_link[1].graph}', alt='Graphic Image'>
+                                </td>
+                                <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
+                                  Pemakaian Selama <br>${dt_month}
+                                  <br>
+                                  <table style='border: 0.5px solid black; border-collapse: collapse; width: 70%'>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>Bandwidth</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>${element.uptd_link[1].bandwith == null ? 'Data not found' : element.uptd_link[1].bandwith} Mbps</td>
+                                    </tr>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>Max</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>${element.uptd_link[1].max_speed == null ? 'Data not found' : element.uptd_link[1].max_speed}</td>
+                                    </tr>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>Min</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>${element.uptd_link[1].min_speed == null ? 'Data not found' : element.uptd_link[1].min_speed}</td>
+                                    </tr>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>Rerata</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>${element.uptd_link[1].speed_average == null ? 'Data not found' : element.uptd_link[1].speed_average}</td>
+                                    </tr>
+                                  </table>
+                                </td>
+                                <td class='spacing' style='width: 30%; vertical-align: top;'>
+                                  Keluhan Selama ${dt_month}
+                                  <br>
+                                  <br>
+                                  <table style='border: 0.5px solid black; border-collapse: collapse; width: 100%'>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>Link Drop</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>5 kali</td>
+                                    </tr>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>Link Unstable</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>10 kali</td>
+                                    </tr>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>Bandwith Drop</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>3 kali</td>
+                                    </tr>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>Gangguan Akses Web</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>4 kali</td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
+                          `:`
+                              <tr>
+                                <td colspan='3'>
+                                  <b>2. Data Not Found</b>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td style='width: 50%; middle-align: top;'>
+                                  <img src='' alt='Image Grpah'>
+                                </td>
+                                <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
+                                  Pemakaian Selama <br>${dt_month}
+                                  <br>
+                                  <table style='border: 0.5px solid black; border-collapse: collapse; width: 70%'>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>Bandwidth</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>0 Mbps</td>
+                                    </tr>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>Max</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>0 Mbps</td>
+                                    </tr>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>Min</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>0 Mbps</td>
+                                    </tr>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>Rerata</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>0 Mbps</td>
+                                    </tr>
+                                  </table>
+                                </td>
+                                <td class='spacing' style='width: 30%; vertical-align: top;'>
+                                  Keluhan Selama ${dt_month}
+                                  <br>
+                                  <br>
+                                  <table style='border: 0.5px solid black; border-collapse: collapse; width: 100%'>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>Link Drop</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>5 kali</td>
+                                    </tr>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>Link Unstable</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>10 kali</td>
+                                    </tr>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>Bandwith Drop</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse;padding-left: 5px'>3 kali</td>
+                                    </tr>
+                                    <tr style='border: 0.5px solid black; border-collapse: collapse;'>
+                                      <td style='padding-left: 5px'>Gangguan Akses Web</td>
+                                      <td style='border: 0.5px solid black; border-collapse: collapse; padding-left: 5px'>4 kali</td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
+                          `}
+                        </tbody>
+                      </table>
+                  `: ''}
+    
+                  <p style='font-style:italic'>*data grafik diambil pada tanggal ${dt_after_isp}</p>
+                  </body>
+                </div>
+                `
+              });
+            }
+          });
+           
+        }
     },
     complete: function (responseJSON) {
       setTimeout(() => {
-        window.location.reload()
-      }, 5000)
-    },
-    error: function (xhr, status, p3, p4) {
-        var err = "Error " + " " + status + " " + p3 + " " + p4;
-        if (xhr.responseText && xhr.responseText[0] == "{")
-            err = JSON.parse(xhr.responseText).Message;
-        iziToast.error({
-          title: 'Update Data Unsuccessfully',
-          message: `${err}`,
-          position: 'topRight'
-        })
-        $('#addUserModal').modal('hide');
-        window.location.reload()
-        return false;
-    }
-  });
-  }); 
-}
+        printPDF(content, contentuptd)
+      },1000);
 
-function closeModal(){
-  $('#editModal').modal("hide")
-}
-
-function resetForm() {
-  document.getElementById("editFormData").reset();
-  document.getElementById('image-preview').style.backgroundImage='';
-}
-
-var element = {}, dataPrint = [];
-function guestById(id){
-  $.ajax({
-    async:false,
-    url: `${urlData}guest/getGuest/` + id,
-    type: 'GET',
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      "Authorization": getCookie("session")
-    },
-    beforeSend: function () {
-        document.getElementById("overlay").removeAttribute("hidden");
-    },
-    success: function (result) {
-      const d = new Date();
-      const months = ["Januari","Februari","Maret","April","Mai","Juni","Juli","Agustus","September","Oktober","November","Desember"];
-      
-      element.ktp = `${urlData}uploads/ktp/${result.data.ktpImage}`
-      element.sign = `${urlData}uploads/ttd/${result.data.signImage}`
-      element.name = result.data.name
-      element.date = `Bandung, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`
-      element.number_form = `${d.getFullYear()}/${result.data.sr_number}/e-Gov`
-      element.sr_number = result.data.sr_number
-      dataPrint.push(element)
-
-      console.log(dataPrint)
-    },
-    complete: function () {
+      iziToast.success({
+        title: 'Berhasil memuat data',
+        message: `Data dengan OPD ${responseJSON.responseJSON.data.name} berhasil dimuat `,
+        position: 'topRight'
+      })
       document.getElementById("overlay").setAttribute("hidden", false);      
     },
-    error: function (xhr, status, p3, p4) {
-        var err = "Error " + " " + status + " " + p3 + " " + p4;
-        if (xhr.responseText && xhr.responseText[0] == "{")
-            err = JSON.parse(xhr.responseText).Message;
-        iziToast.error({
-          title: 'Gagal load data',
-          message: `${err}`,
-          position: 'topRight'
-        })
-        return false;
+    error: function (xhr, status, p3, p4) {      
     }
+  }).fail(function (xhr, responseJSON, result, data) {
+    // ignore the error and do nothing else
+    
+    iziToast.error({
+      title: 'Gagal Memuat Data',
+      message: `Unauthorized with error code ${xhr.status}`,
+      position: 'topRight'
+    })        
+    // setTimeout(() => {
+    //   window.location.reload()
+    // }, 3000)        
+    return false;
   });
-  printPDF()
+});
+
+function printPDF(content, contentuptd) {
+  var myWindow=window.open();
+  //Generate string html file
+  var headHtml = `<html>
+  <style>
+    @media print {
+      @page {
+        margin: 96px!important;
+        size: A4 landscape!important;
+        font-familiy:arial!important;
+      }
+
+      div {
+        page-break-after: always!important;
+      }
+
+      tr.spaceUnder>td {
+        padding-bottom: 1em!important;
+      }
+      
+      tr td:last-child {
+          width: 1%!important;
+          white-space: nowrap!important;
+      }
+
+      td.spacing{
+        border-collapse: separate!important;
+        border-spacing: 20px!important;
+        *border-collapse: expression('separate', cellSpacing='20px')!important;
+      }
+
+      img{
+        style='max-width: 400px; max-height: 300px; width: auto; height: auto;!important'
+      }
+    }
+  </style>`
+  var tailHtml = `</html>`
+
+  var html = ''
+  var opdhtml = content;
+  var uptdhtml = contentuptd;
+  if(contentuptd == '')
+  {
+    html = headHtml + opdhtml + tailHtml
+  }
+  else{
+    html = headHtml + opdhtml + uptdhtml + tailHtml
+  }
+  //Write string html to a new-document-window
+    myWindow.document.write(html);
+  //Finishes writing to a new-document-window
+    myWindow.document.close();
+  //Sets focus to the current window
+    myWindow.focus();
+  //Prints the contents of the current window.
+  
+  setTimeout(function(){     
+    myWindow.print();
+    myWindow.close();
+    window.location.reload()
+  }, 3000);
+  //Closes the current window
 }
 
-function printPDF(){
-  //Open new dialog window
-  var myWindow=window.open('','','width=1200,height=1000');
-  //Generate string html file
-    var sHtml = `<div id='content'>
-          <p align='right' style='font-family: Arial; font-size: 13px'>
-          No Form : ${dataPrint[0].number_form}
-          </p>
-          <table style='width: 100%; border: 0.5px solid black; border-collapse: collapse;'>
-          <tr>
-            <td style='width: 20%; border: 0.5px solid black; border-collapse: collapse; font-family: Arial' align='center'>
-            <img src='https://i1.wp.com/www.desaintasik.com/wp-content/uploads/2018/02/logoprovjabarwarna-desaintasik.com_.png?resize=241%2C282' style='max-width:83px;
-          max-height:90px;
-          width:auto;
-          height:auto;'>
-            </td>
-            <td style='width: 60%; border: 0.5px solid black; border-collapse: collapse; font-family: Arial; font-size: 21px' align='center'><b>FORMULIR NDA</b> <br> <i>(Non Disclosure Agreement)</i></td>
-            <td style='width: 30%; border: 0.5px solid black; border-collapse: collapse; font-family: Arial; font-size: 12px' align='center'>No. Urut: ${dataPrint[0].sr_number} </td>
-          </tr>
-          </table>
-          <p align='center' style='font-family: Arial; font-size: 19px;'>
-          <b>PERNYATAAN MENJAGA KERAHASIAAN</b>
-          </p>
-          <p style='font-family: Arial; font-size: 15px; text-align:justify'>
-          Sehubungan dengan tugas dan pekerjaan saya dalam memberikan dukungan layanan TI, saya dapat saja melakukan akses informasi atau sistem yang berklasifikasi "Rahasia/Penting/Strategis" atau melakukan akses lokasi yang mengandung perangkat kritikal milik Dinas Komunikasi dan Informatika Provinsi Jawa Barat.
-          </p>
-          <p style='display: flex; font-family: Arial; font-size: 15px; text-align:justify; margin-bottom: 5px;'>
-          Informasi "Rahasia/Penting/Strategis" milik Dinas Komunikasi dan Informatika Provinsi Jawa Barat dapat berupa dokumen tercetak (hardcopy) atau file elektronik (softcopy), yang meliputi antara lain:
-          </p>
-          <table style='display: flex; font-family: Arial; font-size: 15px;'>
-          <tr>
-            <td>a.</td>
-            <td>Data pribadi pegawai;</td>
-          </tr>
-          <tr>
-            <td>b.</td>
-            <td>Konfigurasi IT dan IP address;</td>
-          </tr>
-          <tr>
-            <td>c.</td>
-            <td>Password;</td>
-          </tr>
-          <tr>
-            <td>d.</td>
-            <td>Kode program (source code);</td>
-          </tr>
-          <tr>
-            <td>e.</td>
-            <td>Hasil scanning vulnerability/penetration testing;</td>
-          </tr>
-          <tr>
-            <td>f.</td>
-            <td>Hasil kajian risiko (risk assesssment) dan hasil audit;</td>
-          </tr>
-          <tr>
-            <td>g.</td>
-            <td>Data lelang;</td>
-          </tr>
-          <tr>
-            <td style='vertical-align: top; text-align:justify'>h.</td>
-            <td>Data/Informasi berkategori â€œSensitif/Kritikal/Rahasia' lainnya milik Dinas Komunikasi dan Informatika Provinsi Jawa Barat;</td>
-          </tr>
-          </table>
-          <p style='font-family: Arial; font-size: 15px; text-align:justify; margin-bottom: 5px;'>
-          Oleh karena itu, saya setuju untuk:
-          </p>
-          <table style='font-family: Arial; font-size: 15px;'>
-          <tr>
-            <td style='vertical-align: top; text-align:justify'>1.</td>
-            <td style='text-align:justify;'>Tidak membocorkan informasi Rahasia/Penting kepada pihak manapun baik secara langsung maupun tidak langsung.</td>
-          </tr>
-          <tr>
-            <td style='vertical-align: top; text-align:justify'>2.</td>
-            <td style='text-align:justify;'>Tidak memanfaatkan informasi yang saya akses dari Dinas Komunikasi dan Informatika Provinsi Jawa Barat selama penugasan saya untuk kepentingan di luar lingkup pekerjaan yang ditugaskan kepada saya.</td>
-          </tr>
-          <tr>
-            <td style='vertical-align: top; text-align:justify'>3.</td>
-            <td style='text-align:justify;'>Melindungi hak kekayaan intelektual Dinas Komunikasi dan Informatika Provinsi Jawa Barat yang saya akses atau ketahui sebagai akibat penugasan saya.</td>
-          </tr>
-          <tr>
-            <td style='vertical-align: top; text-align:justify'>4.</td>
-            <td style='text-align:justify;'>Mengamankan seluruh informasi dan sistem informasi sesuai kebijakan yang ditetapkan Dinas Komunikasi dan Informatika Provinsi Jawa Barat.</td>
-          </tr>
-          <tr>
-            <td style='vertical-align: top; text-align:justify'>5.</td>
-            <td style='text-align:justify;'>Mematuhi seluruh kebijakan dan prosedur yang ditetapkan Dinas Komunikasi dan Informatika Provinsi Jawa Barat menyangkut keamanan informasi. </td>
-          </tr>
-          <tr>
-            <td style='vertical-align: top; text-align:justify'>6.</td>
-            <td style='text-align:justify;'>Mengembalikan seluruh dokumen atau fasilitas sistem informasi Dinas Komunikasi dan Informatika Provinsi Jawa Barat yang dipinjamkan selama penugasan saya, termasuk mengembalikan hak akses baik lojik (User ID) maupun fisik (ID Card) yang saya terima sebagai bagian dari tugas saya.</td>
-          </tr>
-          <tr>
-            <td style='vertical-align: top; text-align:justify'>7.</td>
-            <td style='text-align:justify;'>Menerima sanksi sesuai ketentuan kontrak dan/atau hukum yang berlaku apabila saya melakukan pelanggaran terhadap ketentuan yang telah ditetapkan di atas.</td>
-          </tr>
-          </table>
-          <table style='display: flex; font-family: Arial; font-size: 15px; margin-top: 5px;'>
-          <tr>
-            <td style='width: 50%'>
-            <p id="fullDate" style="margin:0;padding:0">
-            ${dataPrint[0].date}
-            </p>
-            <div>
-            <img src='${dataPrint[0].sign}' style='max-width:250px;
-            max-height:170px;
-            width:auto;
-            height:auto;'>
-            </div>
-            <br>
-            <p style="margin:0;padding:0">
-            ${dataPrint[0].name}
-            </p>
-            <td style='width: 50%; padding-left: 150px;'><img src='${dataPrint[0].ktp}' style='max-width:290px; max-height:185px; width:auto; height:auto;'></td>
-          </tr>
-          </table>
-        </div>`;
-    
-    //Write string html to a new-document-window
-      myWindow.document.write(sHtml);
-    //Finishes writing to a new-document-window
-      myWindow.document.close();
-    //Sets focus to the current window
-    myWindow.focus();
-    //Prints the contents of the current window.
-    setTimeout(function(){ 
-      myWindow.print();
-      myWindow.close();
-    }, 1500);
-    //Closes the current window
-      
-}
+$('.daterange-cus').daterangepicker({
+  locale: {format: 'YYYY-MM-DD'},
+  drops: 'down',
+  opens: 'right'
+});
+$('.daterange-btn').daterangepicker({
+  ranges: {
+    'Select Range'       : [],
+    'Daily'       : [moment(), moment().add('day', 1)],
+    'Monthly'  : [moment().startOf('month'), moment().endOf('month').add('day', 1)]
+  },
+  // startDate: moment().subtract(29, 'days'),
+  // endDate  : moment()
+}, function (start, end, label) {
+  const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
+    "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+  ];
+
+  const d = new Date(start);
+  dt_month = monthNames[d.getMonth()]
+  console.log(dt_month)
+  alert(label + ' Date Selected ' + start.format('YYYY-MM-DD').toString() + '-00-00-00' +' Until '+  end.format('YYYY-MM-DD').toString() + '-00-00-00')
+  start_date = start.format('YYYY-MM-DD').toString() + '-00-00-00'
+  end_date = end.format('YYYY-MM-DD').toString() + '-00-00-00'
+  var tempdiff = Math.abs(new Date(end) - new Date(start));
+  var diff = tempdiff/86400000
+  if(label == 'Daily' || diff == 1.9999999884259259){
+    dt_after_isp = start.format('DD/MM/YYYY').toString()
+  }
+});
+
+// 2021-9-01-00-00-00
+
+$(".inputtags").tagsinput('items');

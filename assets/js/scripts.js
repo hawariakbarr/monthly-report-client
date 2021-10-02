@@ -62,7 +62,6 @@ $('[data-confirm]').each(function() {
 });
 
 function usermenuAuth(){
-  debugger
   var role = getCookie("role")
   if(role == "true"){
     window.location.replace("user-management.html")
@@ -79,7 +78,7 @@ $(function() {
     try{
       return document.cookie.match(re)[0];	// Will raise TypeError if cookie is not found
     }catch{
-      return "this-cookie-doesn't-exist";
+      return "Who Are You?";
     }
   }
   document.getElementById("username").innerHTML = getCookie("user name")

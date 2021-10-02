@@ -7,7 +7,7 @@ const getCookie = (cookie_name) =>{
     try{
         return document.cookie.match(re)[0];	// Will raise TypeError if cookie is not found
     }catch{
-        return "this-cookie-doesn't-exist";
+        return "Who Are You?";
     }
 }
 window.onload = function() {
@@ -32,7 +32,7 @@ window.onload = function() {
         </div>
         <div class="page-search">
           <div class="mt-3">
-            <a href="data-report.html">Back to Home</a>
+            <a href="index.html">Back to Home</a>
           </div>
         </div>
       </div>

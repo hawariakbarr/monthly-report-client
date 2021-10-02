@@ -55,7 +55,7 @@ userForm.addEventListener("submit", function(e){
       document.getElementById("overlay").setAttribute("hidden", false);
       if(document.cookie.length > 0 )
       {
-        window.location.href  = 'data-report.html'
+        window.location.href  = 'index.html'
         return true;
       }
     },

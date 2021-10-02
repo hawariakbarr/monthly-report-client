@@ -24,7 +24,7 @@ const getCookie = (cookie_name) =>{
   try{
     return document.cookie.match(re)[0];	// Will raise TypeError if cookie is not found
   }catch{
-    return "this-cookie-doesn't-exist";
+    return "Who Are You?";
   }
 }
 
