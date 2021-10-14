@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
+  <title>Data Report &mdash; Bulanan</title>
+
+  <!-- General CSS Files -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+
+  <!-- CSS Libraries -->
+  <link rel="stylesheet" href="../node_modules/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="../node_modules/datatables.net-select-bs4/css/select.bootstrap4.min.css">
+  <link rel="stylesheet" href="../node_modules/izitoast/dist/css/iziToast.min.css">
+
+  <link rel="stylesheet" href="../node_modules/selectric/public/selectric.css">
+  <link rel="stylesheet" href="../node_modules/bootstrap-tagsinput/dist/bootstrap-tagsinput.css">
+  <link rel="stylesheet" href="../node_modules/select2/dist/css/select2.min.css">
+  <link rel="stylesheet" href="../node_modules/bootstrap-timepicker/css/bootstrap-timepicker.min.css">
+
+  <link rel="stylesheet" href="../node_modules/bootstrap-daterangepicker/daterangepicker.css">  
+
+  <!-- Template CSS -->
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+
+<body>
+  <div id="app">
+    <div class="main-wrapper">
+        <div class="navbar-bg"></div>
+        <nav class="navbar navbar-expand-lg main-navbar">
+        <form class="form-inline mr-auto">
+            <ul class="navbar-nav mr-3">
+            <li><a href="#" data-toggle="sidebar" class="nav-link nav-link-lg"><i class="fas fa-bars"></i></a></li>
+            <li><a href="#" data-toggle="search" class="nav-link nav-link-lg d-sm-none"><i class="fas fa-search"></i></a></li>
+            </ul>
+        </form>
+        <ul class="navbar-nav navbar-right">
+            <li class="dropdown">
+            <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
+            <img alt="image" src="../assets/img/avatar/avatar-2.png" class="rounded-circle mr-1">
+            <div class="d-sm-none d-lg-inline-block" id="username"></div>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right">
+                <!-- <div class="dropdown-title">Logged in 5 min ago</div> -->
+                <!-- <a href="features-profile.html" class="dropdown-item has-icon">
+                <i class="far fa-user"></i> Profile
+                </a>-->
+                <!-- for super admin only -->
+                <a href="javascript:usermenuAuth()" id="userMenu" class="dropdown-item has-icon">
+                <i class="fas fa-bolt"></i> User Management
+                </a>
+                <a href="features-settings.html" class="dropdown-item has-icon">
+                <i class="fas fa-cog"></i> Settings
+                </a>
+                <div class="dropdown-divider"></div>
+                <a href="javascript:logout()" class="dropdown-item has-icon text-danger">
+                <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+            </li>
+        </ul>
+        </nav>
+        <div class="main-sidebar">
+        <aside id="sidebar-wrapper">
+            <div class="sidebar-brand">
+            <a href="index.html">Diskominfo Jabar</a>
+            </div>
+            <div class="sidebar-brand sidebar-brand-sm">
+            <a href="index.html">DJB</a>
+            </div>
+            <ul class="sidebar-menu">
+            <li class="menu-header">Dashboard</li>
+            <li><a class="nav-link" href="index.html"><i class="far fa-file-alt"></i> <span>Data Laporan</span></a></li>
+            <li><a class="nav-link" href="insiden-uploader.html"><i class="far fa-file-alt"></i> <span>Insiden</span></a></li>
+            <!-- <li><a class="nav-link" href="link-uploader.html"><i class="far fa-file-alt"></i> <span>Opd & Uptd Link</span></a></li> -->
+            <li class="nav-item dropdown active">
+                <a href="#" class="nav-link has-dropdown"><i class="fas fa-database"></i> <span>Data Master</span></a>
+                <ul class="dropdown-menu">
+                <li><a class="nav-link" href="master-opd.html">Master OPD</a></li>
+                <li class="active"><a class="nav-link" href="master-uptd.html">Master UPTD</a></li>
+                <li><a class="nav-link" href="bootstrap-buttons.html">Master ISP</a></li>
+                <li><a class="nav-link" href="bootstrap-breadcrumb.html">Master Bandwith</a></li>
+                <li><a class="nav-link" href="bootstrap-card.html">Master Complaint</a></li>
+                </ul>
+            </li>
+            <li class="nav-item dropdown">
+                <a href="#" class="nav-link has-dropdown"><i class="fas fa-database"></i> <span>Data Link</span></a>
+                <ul class="dropdown-menu">
+                <li><a class="nav-link" href="bootstrap-alert.html">OPD Link</a></li>
+                <li><a class="nav-link" href="bootstrap-badge.html">UPTD Link</a></li>
+                </ul>
+            </li>
+            <li class="nav-item dropdown">
+                <a href="#" class="nav-link has-dropdown"><i class="fas fa-database"></i> <span>Data Insident</span></a>
+                <ul class="dropdown-menu">
+                <li><a class="nav-link" href="bootstrap-alert.html">OPD Insident</a></li>
+                <li><a class="nav-link" href="bootstrap-badge.html">UPTD Insident</a></li>
+                </ul>
+            </li>             
+            </ul>          
+        </aside>
+        </div>
+
+        <!-- Modal Add -->
+        <div class="modal fade" id="addUptdModal" tabindex="-1" role="dialog" aria-labelledby="userModalLable" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="uptdModalLabel">Tambah Uptd Baru</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                <form action="" id="uptdFormData">
+                    <div class="col-12 col-md-12 col-lg-12">
+                    <div class="card">        
+                        <div class="card-body">
+                            <div class="form-group">
+                              <label>Nama Uptd</label>
+                              <input type="text" class="form-control" id="uptdName" required="" autocomplete="off" placeholder="Nama Uptd" Value="">
+                            </div>
+                            <div class="form-group">
+                              <label>Alamat</label>
+                              <input type="text" class="form-control" id="uptdAddress" required="" autocomplete="off" placeholder="Masukan Alamat" Value="">
+                            </div>                       
+                            <div class="form-group">
+                              <label>Nama Opd</label>
+                              <select class="form-control" id="opdName" name="kepKunjungan" required placholder="--Select Opd--">
+                                <option value="" selected>--Select Data--</option>  
+                              </select>
+                            </div>
+                            <div class="form-group">
+                              <label>PIC</label>
+                              <input type="text" class="form-control" id="uptdPic" required="" autocomplete="off" placeholder="Masukan Nama PIC" Value="">
+                            </div>
+                            <div class="form-group">
+                              <label>Phone Number</label>
+                              <input type="number" maxLength="14" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" class="form-control" id="uptdPhone" autocomplete="off" placeholder="Nomer Telepon" Value="">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-right">
+                        <button class="btn btn-sm btn-danger mr-1" data-dismiss="modal">Close</button>
+                        <button class="btn btn-sm btn-primary">Submit</button>        
+                    </div>
+                    </div>
+                </form>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Modal Edit -->
+        <div class="modal fade" id="editUptdModal" tabindex="-1" role="dialog" aria-labelledby="userModalLable" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="editUptdModalLabel">Tambah User Baru</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                <form id="editFormData">
+                    <!-- data will show here -->
+                </form>
+                </div>
+            </div>
+            </div>
+        </div>
+        <!-- End of Modal Edit -->
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <!-- loading overlay section -->
+        <div class="loading" id="overlay" hidden>Loading&#8230;</div>
+        <!-- loading overlay section -->
+        <section class="section">
+          <div class="section-header">
+            <h1>Data Master Uptd</h1>
+          </div>
+
+          <h2 class="section-title">Tabel Data Uptd</h2>
+          <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                    <input class="btn btn-primary sm" type="button" id="buttonModal" value="Tambah Data Uptd"  data-toggle="modal" data-target="#addUptdModal">
+                </div>
+                <div class="card-body" id="table-here"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+      <footer class="main-footer">
+        <div class="footer-left">
+          Copyright &copy; 2021 <div class="bullet"></div> Diskominfo Jabar</a>
+        </div>
+        <div class="footer-right">
+          1.0.0
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- General JS Scripts -->
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.nicescroll/3.7.6/jquery.nicescroll.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+  <script src="../assets/js/stisla.js"></script>
+
+  <!-- JS Libraies -->
+  <script src="../node_modules/datatables/media/js/jquery.dataTables.min.js"></script>
+  <script src="../node_modules/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+  <script src="../node_modules/datatables.net-select-bs4/js/select.bootstrap4.min.js"></script>
+  <script src="../node_modules/izitoast/dist/js/iziToast.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
+  <script src="../node_modules/selectric/public/jquery.selectric.min.js"></script>
+  <script src="../node_modules/jquery_upload_preview/assets/js/jquery.uploadPreview.min.js"></script>
+  <script src="../node_modules/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js"></script>
+
+  <script src="../node_modules/cleave.js/dist/cleave.min.js"></script>
+  <script src="../node_modules/cleave.js/dist/addons/cleave-phone.id.js"></script>
+  <script src="../node_modules/bootstrap-daterangepicker/daterangepicker.js"></script>
+  <script src="../node_modules/bootstrap-timepicker/js/bootstrap-timepicker.min.js"></script>
+  <script src="../node_modules/select2/dist/js/select2.full.min.js"></script>
+
+  <!-- Template JS File -->
+  <script src="../assets/js/scripts.js"></script>
+  <script src="../assets/js/custom.js"></script>
+
+  <!-- Page Specific JS File -->
+  <script src="../assets/js/page/master-uptd.js"></script>
+  <script type="text/javascript" src="/env.json"></script>
+</body>
+</html>

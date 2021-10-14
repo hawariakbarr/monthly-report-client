@@ -5,16 +5,22 @@ var start_date = ''
 var end_date = ''
 var dt_after_isp = ''
 var dt_month = ''
+
 window.onload = function() {
-  if(document.cookie.length > 0 )
+  if(getCookie('session') != 'Who Are You?')
   {
+    if(getCookie("role") == "false"){
+      document.getElementById("userMenu").setAttribute("hidden", true);
+    }else{
+      document.getElementById("userMenu").removeAttribute("hidden");
+    }
     fetch("../env.json")
         .then(response => response.json())
         .then(json => urlData = json[0].local_url)
         .then(function(){
           getDataOpd(urlData)
         });
-    }
+  }
   else{
     location.replace("auth-login.html")
   }
@@ -1457,13 +1463,13 @@ exampleForm.addEventListener("submit", function(e){
     complete: function (responseJSON) {
       setTimeout(() => {
         printPDF(content, contentuptd)
-      },1000);
+      },1500);
 
-      iziToast.success({
-        title: 'Berhasil memuat data',
-        message: `Data dengan OPD ${responseJSON.responseJSON.data.name} berhasil dimuat `,
-        position: 'topRight'
-      })
+      // iziToast.success({
+      //   title: 'Berhasil memuat data',
+      //   message: `Data dengan OPD ${responseJSON.responseJSON.data.name} berhasil dimuat `,
+      //   position: 'topRight'
+      // })
       document.getElementById("overlay").setAttribute("hidden", false);      
     },
     error: function (xhr, status, p3, p4) {      
@@ -1485,40 +1491,43 @@ exampleForm.addEventListener("submit", function(e){
 
 function printPDF(content, contentuptd) {
   var myWindow=window.open();
-  //Generate string html file
-  var headHtml = `<html>
-  <style>
-    @media print {
-      @page {
-        margin: 96px!important;
-        size: A4 landscape!important;
-        font-familiy:arial!important;
-      }
+  // Generate string html file
+  var headHtml = 
+  `
+    <html>
+        <style>
+          @media print {
+            @page {
+              margin: 96px;
+              size: A4 landscape;
+              font-familiy:arial;
+            }
 
-      div {
-        page-break-after: always!important;
-      }
+            div {
+              page-break-after: always;
+            }
 
-      tr.spaceUnder>td {
-        padding-bottom: 1em!important;
-      }
-      
-      tr td:last-child {
-          width: 1%!important;
-          white-space: nowrap!important;
-      }
+            tr.spaceUnder>td {
+              padding-bottom: 1em;
+            }
+            
+            tr td:last-child {
+                width: 1%;
+                white-space: nowrap;
+            }
 
-      td.spacing{
-        border-collapse: separate!important;
-        border-spacing: 20px!important;
-        *border-collapse: expression('separate', cellSpacing='20px')!important;
-      }
+            td.spacing{
+              border-collapse: separate;
+              border-spacing: 80px;
+              *border-collapse: expression('separate', cellSpacing='80px');
+            }
 
-      img{
-        style='max-width: 400px; max-height: 300px; width: auto; height: auto;!important'
-      }
-    }
-  </style>`
+            img{
+              style='max-width: 900px; max-height: 700px; width: auto; height: auto;'
+            }
+          }
+        </style>
+    `
   var tailHtml = `</html>`
 
   var html = ''
@@ -1541,9 +1550,8 @@ function printPDF(content, contentuptd) {
   
   setTimeout(function(){     
     myWindow.print();
-    myWindow.close();
-    window.location.reload()
-  }, 3000);
+  }, 4000);
+  
   //Closes the current window
 }
 
