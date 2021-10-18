@@ -40,15 +40,15 @@ const getCookie = (cookie_name) =>{
 const userForm = document.getElementById("formData");
 userForm.addEventListener("submit", function(e){  
   e.preventDefault();
-  var bandwith = document.getElementById('name').value
+  var complaint = document.getElementById('name').value
   
   //Obj of data to send in future like a dummyDb
   const data = { 
-    bandwith: bandwith,
+    category: complaint,
   };
 
   $.ajax({
-    url: `${urlData}bandwith/add`,
+    url: `${urlData}complaint/add`,
     type: 'POST',
     data: JSON.stringify(data),
     datatype: 'json',
@@ -71,8 +71,8 @@ userForm.addEventListener("submit", function(e){
           document.getElementById("overlay").setAttribute("hidden", false);      
           $('#addModal').modal('hide');
           iziToast.success({
-            title: 'Bandwith Berhasil Ditambahkan',
-            message: `Bandwith Dengan Nama ${result.data.bandwith} Berhasil Disimpan`,
+            title: 'Complaint Berhasil Ditambahkan',
+            message: `Complaint Dengan Nama ${result.data.category} Berhasil Disimpan`,
             position: 'topRight'
           })
           setTimeout(() => {
@@ -109,7 +109,7 @@ userForm.addEventListener("submit", function(e){
 
 async function getDataTable(urlData){
     await $.ajax({
-      url: `${urlData}bandwith/get-all-band`,
+      url: `${urlData}complaint/get-all-complaint`,
       type: 'GET',
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -125,7 +125,7 @@ async function getDataTable(urlData){
             <thead>
               <tr>
                 <th style="width: 30px; text-align: center;">Id</th>
-                <th>Bandwith</th>
+                <th>Complaint</th>
                 <th class="text-center">Action</th>
               </tr>
             </thead>
@@ -141,7 +141,7 @@ async function getDataTable(urlData){
           listData += `
             <tr>
               <td align="center">${element.id}</td>
-              <td>${element.bandwith} Mbps</td>
+              <td>${element.category}</td>
               <td>
                 <button class="btn btn-info btn-sm btn-icon  mr-1" id="editBTn" data-toggle="tooltip" title="Edit" data-original-title="Edit" onClick="openEditModal(${element.id})"><i class="fas fa-pencil-alt fa-sm" style=" color:white"></i></button>
                 <button class="btn btn-danger btn-sm btn-icon" data-toggle="tooltip" title="Delete" onClick="deleteData(${element.id})" ><i class="fas fa-trash fa-sm" style=" color:white"></i></button>
@@ -179,7 +179,7 @@ async function getDataTable(urlData){
 
 function openEditModal(id){
     $.ajax({
-      url: `${urlData}bandwith/get-bandwith/` + id,
+      url: `${urlData}complaint/get-complaint/` + id,
       type: 'GET',
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -191,14 +191,15 @@ function openEditModal(id){
       },
       success: function (result) {
           // element is div holding the ParticalView
+          console.log(result.data)
           document.getElementById('editFormData').innerHTML = 
           `
             <div class="col-12 col-md-12 col-lg-12">
             <div class="card">        
               <div class="card-body">
                 <div class="form-group">
-                  <label>Bandwith</label>
-                  <input type="number" class="form-control" id="nameEdit" required="" autocomplete="off" placeholder="Nama Opd" Value="${result.data.bandwith}">
+                  <label>Complaint</label>
+                  <input type="text" class="form-control" id="nameEdit" required="" autocomplete="off" placeholder="Jenis Keluhan" Value="${result.data.category}">
                 </div>
             </div>
             <div class="text-right">
@@ -231,14 +232,14 @@ function editData(id){
     $('#editFormData').on("submit", function(e){
         e.preventDefault()
 
-        var bandwith = document.getElementById('nameEdit').value
+        var complaint = document.getElementById('nameEdit').value
 
         const data = { 
-            bandwith: bandwith
+            category: complaint
         };
 
         $.ajax({
-        url: `${urlData}bandwith/update-bandwith/` + id,
+        url: `${urlData}complaint/update-complaint/` + id,
         type: 'PUT',
         headers: {
             "Authorization": getCookie("session")
@@ -255,7 +256,7 @@ function editData(id){
             document.getElementById("overlay").setAttribute("hidden", false);
             iziToast.success({
                 title: 'Update Data Berhasil',
-                message: `Data dengan nama bandwith ${result.data.bandwith} berhasil diubah`,
+                message: `Data dengan kategori keluhan ${result.data.category} berhasil diubah`,
                 position: 'topRight'
             })
             //store result.data.token ke cookies bagian ini
@@ -286,7 +287,7 @@ async function deleteData(id){
     var result = confirm("Are you sure to delete this data?");
     if (result) 
         $.ajax({
-        url: `${urlData}bandwith/delete-bandwith/` + id,
+        url: `${urlData}complaint/delete-complaint/` + id,
         type: 'DELETE',
         headers: {
             "Content-Type": "application/x-www-form-urlencoded",
