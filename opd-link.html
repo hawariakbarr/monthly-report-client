@@ -76,10 +76,10 @@
             <li><a class="nav-link" href="index.html"><i class="far fa-file-alt"></i> <span>Data Laporan</span></a></li>
             <!-- <li><a class="nav-link" href="insiden-uploader.html"><i class="far fa-file-alt"></i> <span>Insiden</span></a></li> -->
             <!-- <li><a class="nav-link" href="link-uploader.html"><i class="far fa-file-alt"></i> <span>Opd & Uptd Link</span></a></li> -->
-            <li class="nav-item dropdown">
+            <li class="nav-item dropdown active">
                 <a href="#" class="nav-link has-dropdown"><i class="fas fa-database"></i> <span>Data Link</span></a>
                 <ul class="dropdown-menu">
-                  <li><a class="nav-link" href="opd-link.html">OPD Link</a></li>
+                  <li class="active"><a class="nav-link" href="opd-link.html">OPD Link</a></li>
                   <li><a class="nav-link" href="bootstrap-badge.html">UPTD Link</a></li>
                 </ul>
             </li>
@@ -89,17 +89,17 @@
                   <li><a class="nav-link" href="bootstrap-alert.html">OPD Insident</a></li>
                   <li><a class="nav-link" href="bootstrap-badge.html">UPTD Insident</a></li>
                 </ul>
-            </li>   
-            <li class="nav-item dropdown active">
-                <a href="#" class="nav-link has-dropdown"><i class="fas fa-database"></i> <span>Data Master</span></a>
-                <ul class="dropdown-menu">
-                  <li><a class="nav-link" href="master-opd.html">Master OPD</a></li>
-                  <li><a class="nav-link" href="master-uptd.html">Master UPTD</a></li>
-                  <li><a class="nav-link" href="master-isp.html">Master ISP</a></li>
-                  <li><a class="nav-link" href="master-bandwith.html">Master Bandwith</a></li>
-                  <li class="active"><a class="nav-link" href="master-complaint.html">Master Complaint</a></li>
-                </ul>
-            </li>          
+            </li>             
+            <li class="nav-item dropdown">
+              <a href="#" class="nav-link has-dropdown"><i class="fas fa-database"></i> <span>Data Master</span></a>
+              <ul class="dropdown-menu">
+                <li><a class="nav-link" href="master-opd.html">Master OPD</a></li>
+                <li><a class="nav-link" href="master-uptd.html">Master UPTD</a></li>
+                <li><a class="nav-link" href="master-isp.html">Master ISP</a></li>
+                <li><a class="nav-link" href="master-bandwith.html">Master Bandwith</a></li>
+                <li><a class="nav-link" href="master-complaint.html">Master Complaint</a></li>
+              </ul>
+          </li>
             </ul>          
         </aside>
         </div>
@@ -109,7 +109,7 @@
             <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                <h5 class="modal-title" id="modalLable">Tambah Complaint Baru</h5>
+                <h5 class="modal-title" id="modalLable">Tambah Opd Link Baru</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -120,8 +120,26 @@
                     <div class="card">        
                         <div class="card-body">
                             <div class="form-group">
-                              <label>Complaint</label>
-                              <input type="text" class="form-control" id="name" required="" autocomplete="off" placeholder="Jenis Keluhan" Value="">
+                              <label>PRTG</label>
+                              <input type="number" class="form-control" id="prtgId" required="" autocomplete="off" placeholder="ID PRTG" Value="">
+                            </div>
+                            <div class="form-group">
+                              <label>Nama Opd</label>
+                              <select class="form-control" id="listOpd" name="opd name" required placholder="--Select Opd--">
+                                <option value="" selected>--Select Data--</option>  
+                              </select>
+                            </div>
+                            <div class="form-group">
+                              <label>ISP</label>
+                              <select class="form-control" id="listIsp" name="isp name" required placholder="--Select ISP--">
+                                <option value="" selected>--Select Data--</option>  
+                              </select>
+                            </div>
+                            <div class="form-group">
+                              <label>Bandwith</label>
+                              <select class="form-control" id="listBandwith" name="bandwith" required placholder="--Select Bandwith--">
+                                <option value="" selected>--Select Data--</option>  
+                              </select>
                             </div>
                         </div>
                     </div>
@@ -142,7 +160,7 @@
             <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                <h5 class="modal-title" id="editModalLable">Tambah Complaint Baru</h5>
+                <h5 class="modal-title" id="editModalLable">Tambah User Baru</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -164,15 +182,15 @@
         <!-- loading overlay section -->
         <section class="section">
           <div class="section-header">
-            <h1>Data Master Complaint</h1>
+            <h1>Data OPD Link</h1>
           </div>
 
-          <h2 class="section-title">Tabel Data Complaint</h2>
+          <h2 class="section-title">Tabel Data Opd Link</h2>
           <div class="row">
             <div class="col-12">
               <div class="card">
                 <div class="card-header">
-                    <input class="btn btn-primary sm" type="button" id="buttonModal" value="Tambah Data Complaint"  data-toggle="modal" data-target="#addModal">
+                    <input class="btn btn-primary sm" type="button" id="buttonModal" value="Tambah Data Opd Link"  data-toggle="modal" data-target="#addModal">
                 </div>
                 <div class="card-body" id="table-here"></div>
               </div>
@@ -221,7 +239,7 @@
   <script src="../assets/js/custom.js"></script>
 
   <!-- Page Specific JS File -->
-  <script src="../assets/js/page/master-complaint.js"></script>
+  <script src="../assets/js/page/opd-link.js"></script>
   <script type="text/javascript" src="/env.json"></script>
 </body>
 </html>
