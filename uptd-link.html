@@ -76,11 +76,11 @@
             <li><a class="nav-link" href="index.html"><i class="far fa-file-alt"></i> <span>Data Laporan</span></a></li>
             <!-- <li><a class="nav-link" href="insiden-uploader.html"><i class="far fa-file-alt"></i> <span>Insiden</span></a></li> -->
             <!-- <li><a class="nav-link" href="link-uploader.html"><i class="far fa-file-alt"></i> <span>Opd & Uptd Link</span></a></li> -->
-            <li class="nav-item dropdown">
+            <li class="nav-item dropdown active">
                 <a href="#" class="nav-link has-dropdown"><i class="fas fa-database"></i> <span>Data Link</span></a>
                 <ul class="dropdown-menu">
                   <li><a class="nav-link" href="opd-link.html">OPD Link</a></li>
-                  <li><a class="nav-link" href="uptd-link.html">UPTD Link</a></li>
+                  <li class="active"><a class="nav-link" href="uptd-link.html">UPTD Link</a></li>
                 </ul>
             </li>
             <li class="nav-item dropdown">
@@ -89,57 +89,57 @@
                   <li><a class="nav-link" href="bootstrap-alert.html">OPD Insident</a></li>
                   <li><a class="nav-link" href="bootstrap-badge.html">UPTD Insident</a></li>
                 </ul>
-            </li>   
-            <li class="nav-item dropdown active">
-                <a href="#" class="nav-link has-dropdown"><i class="fas fa-database"></i> <span>Data Master</span></a>
-                <ul class="dropdown-menu">
-                  <li><a class="nav-link" href="master-opd.html">Master OPD</a></li>
-                  <li class="active"><a class="nav-link" href="master-uptd.html">Master UPTD</a></li>
-                  <li><a class="nav-link" href="master-isp.html">Master ISP</a></li>
-                  <li><a class="nav-link" href="master-bandwith.html">Master Bandwith</a></li>
-                  <li><a class="nav-link" href="master-complaint.html">Master Complaint</a></li>
-                </ul>
-            </li>          
+            </li>             
+            <li class="nav-item dropdown">
+              <a href="#" class="nav-link has-dropdown"><i class="fas fa-database"></i> <span>Data Master</span></a>
+              <ul class="dropdown-menu">
+                <li><a class="nav-link" href="master-opd.html">Master OPD</a></li>
+                <li><a class="nav-link" href="master-uptd.html">Master UPTD</a></li>
+                <li><a class="nav-link" href="master-isp.html">Master ISP</a></li>
+                <li><a class="nav-link" href="master-bandwith.html">Master Bandwith</a></li>
+                <li><a class="nav-link" href="master-complaint.html">Master Complaint</a></li>
+              </ul>
+          </li>
             </ul>          
         </aside>
         </div>
 
         <!-- Modal Add -->
-        <div class="modal fade" id="addUptdModal" tabindex="-1" role="dialog" aria-labelledby="userModalLable" aria-hidden="true">
+        <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="modalLable" aria-hidden="true">
             <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                <h5 class="modal-title" id="uptdModalLabel">Tambah Uptd Baru</h5>
+                <h5 class="modal-title" id="modalLable">Tambah Uptd Link Baru</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
                 </div>
                 <div class="modal-body">
-                <form action="" id="uptdFormData">
+                <form action="" id="formData">
                     <div class="col-12 col-md-12 col-lg-12">
                     <div class="card">        
                         <div class="card-body">
                             <div class="form-group">
-                              <label>Nama Uptd</label>
-                              <input type="text" class="form-control" id="uptdName" required="" autocomplete="off" placeholder="Nama Uptd" Value="">
+                              <label>PRTG</label>
+                              <input type="number" class="form-control" id="prtgId" required="" autocomplete="off" placeholder="ID PRTG" Value="">
                             </div>
                             <div class="form-group">
-                              <label>Alamat</label>
-                              <input type="text" class="form-control" id="uptdAddress" required="" autocomplete="off" placeholder="Masukan Alamat" Value="">
-                            </div>                       
-                            <div class="form-group">
-                              <label>Nama Opd</label>
-                              <select class="form-control" id="opdName" name="opd name" required placholder="--Select Opd--">
+                              <label>Nama Uptd</label>
+                              <select class="form-control" id="listUptd" name="uptd name" required placholder="--Select Uptd--">
                                 <option value="" selected>--Select Data--</option>  
                               </select>
                             </div>
                             <div class="form-group">
-                              <label>PIC</label>
-                              <input type="text" class="form-control" id="uptdPic" required="" autocomplete="off" placeholder="Masukan Nama PIC" Value="">
+                              <label>ISP</label>
+                              <select class="form-control" id="listIsp" name="isp name" required placholder="--Select ISP--">
+                                <option value="" selected>--Select Data--</option>  
+                              </select>
                             </div>
                             <div class="form-group">
-                              <label>Phone Number</label>
-                              <input type="number" maxLength="14" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" class="form-control" id="uptdPhone" autocomplete="off" placeholder="Nomer Telepon" Value="">
+                              <label>Bandwith</label>
+                              <select class="form-control" id="listBandwith" name="bandwith" required placholder="--Select Bandwith--">
+                                <option value="" selected>--Select Data--</option>  
+                              </select>
                             </div>
                         </div>
                     </div>
@@ -156,11 +156,11 @@
         </div>
 
         <!-- Modal Edit -->
-        <div class="modal fade" id="editUptdModal" tabindex="-1" role="dialog" aria-labelledby="userModalLable" aria-hidden="true">
+        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="modalLable" aria-hidden="true">
             <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                <h5 class="modal-title" id="editUptdModalLabel">Tambah User Baru</h5>
+                <h5 class="modal-title" id="editModalLable">Edit Data Uptd</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -182,15 +182,15 @@
         <!-- loading overlay section -->
         <section class="section">
           <div class="section-header">
-            <h1>Data Master Uptd</h1>
+            <h1>Data UPTD Link</h1>
           </div>
 
-          <h2 class="section-title">Tabel Data Uptd</h2>
+          <h2 class="section-title">Tabel Data Uptd Link</h2>
           <div class="row">
             <div class="col-12">
               <div class="card">
                 <div class="card-header">
-                    <input class="btn btn-primary sm" type="button" id="buttonModal" value="Tambah Data Uptd"  data-toggle="modal" data-target="#addUptdModal">
+                    <input class="btn btn-primary sm" type="button" id="buttonModal" value="Tambah Data Uptd Link"  data-toggle="modal" data-target="#addModal">
                 </div>
                 <div class="card-body" id="table-here"></div>
               </div>
@@ -239,7 +239,7 @@
   <script src="../assets/js/custom.js"></script>
 
   <!-- Page Specific JS File -->
-  <script src="../assets/js/page/master-uptd.js"></script>
+  <script src="../assets/js/page/uptd-link.js"></script>
   <script type="text/javascript" src="/env.json"></script>
 </body>
 </html>
