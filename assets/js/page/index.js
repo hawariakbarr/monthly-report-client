@@ -188,7 +188,7 @@ exampleForm.addEventListener("submit", function(e){
                           </tr>
                           <tr class='spaceUnder'>
                             <td style='width: 50%; middle-align: top;'>
-                              <img src='${element.opd_link[0].graph == null ? 'Data not found' : element.opd_link[0].graph}' alt='Graphic Image'>
+                              <img src='${element.opd_link[0].graph == null ? 'Data not found' : element.opd_link[0].graph}' alt='PRTG ID: ${element.opd_link[0].prtg_id}'>
                             </td>
                             <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
                               Pemakaian Selama <br>${dt_month}
@@ -245,7 +245,7 @@ exampleForm.addEventListener("submit", function(e){
                           </tr>
                           <tr class='spaceUnder'>
                             <td style='width: 50%; middle-align: top;'>
-                              <img src='' alt='Graphic Image'>
+                              <img src='' alt='PRTG ID Is None'>
                             </td>
                             <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
                               Pemakaian Selama <br>${dt_month}
@@ -303,7 +303,7 @@ exampleForm.addEventListener("submit", function(e){
                           </tr>
                           <tr>
                             <td style='width: 50%; middle-align: top;'>
-                              <img src='${element.opd_link[1].graph == null ? '' : element.opd_link[1].graph}', alt='Graphic Image'>
+                              <img src='${element.opd_link[1].graph == null ? '' : element.opd_link[1].graph}', alt='PRTG ID: ${element.opd_link[1].prtg_id}'>
                             </td>
                             <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
                               Pemakaian Selama <br>${dt_month}
@@ -359,7 +359,7 @@ exampleForm.addEventListener("submit", function(e){
                           </tr>
                           <tr>
                             <td style='width: 50%; middle-align: top;'>
-                              <img src='' alt='Image Grpah'>
+                              <img src='' alt='PRTG ID Is None'>
                             </td>
                             <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
                               Pemakaian Selama <br>${dt_month}
@@ -446,7 +446,7 @@ exampleForm.addEventListener("submit", function(e){
                           </tr>
                           <tr class='spaceUnder'>
                             <td style='width: 50%; middle-align: top;'>
-                              <img src='${elementuptd.uptd_link[0].graph == null ? 'Data not found' : elementuptd.uptd_link[0].graph}' alt='Graphic Image'>
+                              <img src='${elementuptd.uptd_link[0].graph == null ? 'Data not found' : elementuptd.uptd_link[0].graph}' alt='PRTG ID: ${elementuptd.uptd_link[0].prtg_id}'>
                             </td>
                             <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
                               Pemakaian Selama <br>${dt_month}
@@ -503,7 +503,7 @@ exampleForm.addEventListener("submit", function(e){
                           </tr>
                           <tr class='spaceUnder'>
                             <td style='width: 50%; middle-align: top;'>
-                              <img src='' alt='Graphic Image'>
+                              <img src='' alt='PRTG ID Is None'>
                             </td>
                             <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
                               Pemakaian Selama <br>${dt_month}
@@ -561,7 +561,7 @@ exampleForm.addEventListener("submit", function(e){
                           </tr>
                           <tr>
                             <td style='width: 50%; middle-align: top;'>
-                              <img src='${elementuptd.uptd_link[1].graph == null ? '' : elementuptd.uptd_link[1].graph}', alt='Graphic Image'>
+                              <img src='${elementuptd.uptd_link[1].graph == null ? '' : elementuptd.uptd_link[1].graph}', alt='PRTG ID : ${elementuptd.uptd_link[1].prtg_id}'>
                             </td>
                             <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
                               Pemakaian Selama <br>${dt_month}
@@ -617,7 +617,7 @@ exampleForm.addEventListener("submit", function(e){
                           </tr>
                           <tr>
                             <td style='width: 50%; middle-align: top;'>
-                              <img src='' alt='Image Grpah'>
+                              <img src='' alt='PRTG ID Is None'>
                             </td>
                             <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
                               Pemakaian Selama <br>${dt_month}
@@ -706,7 +706,7 @@ exampleForm.addEventListener("submit", function(e){
                             </tr>
                             <tr class='spaceUnder'>
                               <td style='width: 50%; middle-align: top;'>
-                                <img src='${element.uptd_link[0].graph == null ? 'Data not found' : element.uptd_link[0].graph}' alt='Graphic Image'>
+                                <img src='${element.uptd_link[0].graph == null ? 'Data not found' : element.uptd_link[0].graph}' alt='PRTG ID: ${element.uptd_link[0].prtg_id}'>
                               </td>
                               <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
                                 Pemakaian Selama <br>${dt_month}
@@ -763,7 +763,7 @@ exampleForm.addEventListener("submit", function(e){
                             </tr>
                             <tr class='spaceUnder'>
                               <td style='width: 50%; middle-align: top;'>
-                                <img src='' alt='Graphic Image'>
+                                <img src='' alt='PRTG ID Is None'>
                               </td>
                               <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
                                 Pemakaian Selama <br>${dt_month}
@@ -821,7 +821,7 @@ exampleForm.addEventListener("submit", function(e){
                             </tr>
                             <tr>
                               <td style='width: 50%; middle-align: top;'>
-                                <img src='${element.uptd_link[1].graph == null ? '' : element.uptd_link[1].graph}', alt='Graphic Image'>
+                                <img src='${element.uptd_link[1].graph == null ? '' : element.uptd_link[1].graph}', alt='PRTG ID: ${element.uptd_link[1].prtg_id}'>
                               </td>
                               <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
                                 Pemakaian Selama <br>${dt_month}
@@ -877,7 +877,7 @@ exampleForm.addEventListener("submit", function(e){
                             </tr>
                             <tr>
                               <td style='width: 50%; middle-align: top;'>
-                                <img src='' alt='Image Grpah'>
+                                <img src='' alt='PRTG ID Is None'>
                               </td>
                               <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
                                 Pemakaian Selama <br>${dt_month}
@@ -1026,7 +1026,7 @@ exampleForm.addEventListener("submit", function(e){
                         </tr>
                         <tr class='spaceUnder'>
                           <td style='width: 50%; middle-align: top;'>
-                            <img src='' alt='Graphic Image'>
+                            <img src='' alt='PRTG ID Is None'>
                           </td>
                           <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
                             Pemakaian Selama <br>${dt_month}
@@ -1084,7 +1084,7 @@ exampleForm.addEventListener("submit", function(e){
                         </tr>
                         <tr>
                           <td style='width: 50%; middle-align: top;'>
-                            <img src='${element.opd_link[1].graph == null ? '' : element.opd_link[1].graph}' alt='Graphic Image'>
+                            <img src='${element.opd_link[1].graph == null ? '' : element.opd_link[1].graph}' alt='PRTG ID: ${element.opd_link[1].prtg_id}'>
                           </td>
                           <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
                             Pemakaian Selama <br>${dt_month}
@@ -1140,7 +1140,7 @@ exampleForm.addEventListener("submit", function(e){
                         </tr>
                         <tr>
                           <td style='width: 50%; middle-align: top;'>
-                            <img src='' alt='Image Grpah'>
+                            <img src='' alt='PRTG ID Is None'>
                           </td>
                           <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
                             Pemakaian Selama <br>${dt_month}
@@ -1226,7 +1226,7 @@ exampleForm.addEventListener("submit", function(e){
                               </tr>
                               <tr class='spaceUnder'>
                                 <td style='width: 50%; middle-align: top;'>
-                                  <img src='${element.uptd_link[0].graph == null ? 'Data not found' : element.uptd_link[0].graph}' alt='Graphic Image'>
+                                  <img src='${element.uptd_link[0].graph == null ? 'Data not found' : element.uptd_link[0].graph}' alt='PRTG ID: ${element.uptd_link[0].prtg_id}'>
                                 </td>
                                 <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
                                   Pemakaian Selama <br>${dt_month}
@@ -1283,7 +1283,7 @@ exampleForm.addEventListener("submit", function(e){
                               </tr>
                               <tr class='spaceUnder'>
                                 <td style='width: 50%; middle-align: top;'>
-                                  <img src='' alt='Graphic Image'>
+                                  <img src='' alt='PRTG ID Is None'>
                                 </td>
                                 <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
                                   Pemakaian Selama <br>${dt_month}
@@ -1341,7 +1341,7 @@ exampleForm.addEventListener("submit", function(e){
                               </tr>
                               <tr>
                                 <td style='width: 50%; middle-align: top;'>
-                                  <img src='${element.uptd_link[1].graph == null ? '' : element.uptd_link[1].graph}', alt='Graphic Image'>
+                                  <img src='${element.uptd_link[1].graph == null ? '' : element.uptd_link[1].graph}', alt='PRTG ID: ${element.uptd_link[1].prtg_id}'>
                                 </td>
                                 <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
                                   Pemakaian Selama <br>${dt_month}
@@ -1397,7 +1397,7 @@ exampleForm.addEventListener("submit", function(e){
                               </tr>
                               <tr>
                                 <td style='width: 50%; middle-align: top;'>
-                                  <img src='' alt='Image Grpah'>
+                                  <img src='' alt='PRTG ID Is None'>
                                 </td>
                                 <td class='spacing' style='width: 20%; padding-right:20px; vertical-align: top;'>
                                   Pemakaian Selama <br>${dt_month}
