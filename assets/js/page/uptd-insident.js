@@ -189,6 +189,7 @@ async function getDatatableUptd(urlData){
 
 function openEditModal(id){
     $.ajax({
+      async:false,
       url: `${urlData}insident/get-uptd-insident/` + id,
       type: 'GET',
       headers: {
@@ -208,19 +209,19 @@ function openEditModal(id){
               <div class="card-body">
                 <div class="form-group">
                   <label>Nama Uptd</label>
-                  <select class="form-control" id="listeditUptd" name="uptd name" required placholder="--Select Uptd--">
+                  <select class="form-control select2" id="listeditUptd" name="uptd name" required placholder="--Select Uptd--">
                     <option value="" selected>--Select Data--</option>  
                   </select>
                 </div>
                 <div class="form-group">
                   <label>Jenis Keluhan</label>
-                  <select class="form-control" id="listeditComplaint" name="complaint name" required placholder="--Select Complaint--">
+                  <select class="form-control select2" id="listeditComplaint" name="complaint name" required placholder="--Select Complaint--">
                     <option value="" selected>--Select Data--</option>  
                   </select>
                 </div>                       
                 <div class="form-group">
                   <label>Bulan</label>
-                  <select class="form-control" id="editmonthName" name="month name" required placholder="--Select Month--">
+                  <select class="form-control select2" id="editmonthName" name="month name" required placholder="--Select Month--">
                     <option value="" selected>--Select Data--</option>  
                     <option value="1">Januari</option> 
                     <option value="2">Februari</option> 
@@ -254,44 +255,17 @@ function openEditModal(id){
           </div>
           `
           $('#editModal').modal('show')
-
-          $.ajax({
-            url: urlData + 'report/get-opd-name',
-            type: 'GET',
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-              "Authorization": getCookie("session")
-            },
-            beforeSend: function () {
-                document.getElementById("overlay").removeAttribute("hidden");
-            },
-            success: function (result) {      
-              if(result.data.length > 0)
-                result.data.forEach((element, index) => {
-                  $('#opdnameEdit').append(`<option value="${element.id}">${element.name}</option>`);
-                });
-            },
-            complete: function (responseJSON) {
-              document.getElementById("overlay").setAttribute("hidden", false);
-              getDataComplaint(urlData, 'listeditComplaint')
-              getDataUptd(urlData, 'listeditUptd')
-            },
-            error: function (xhr, status, p3, p4) {
-                var err = "Error " + " " + status + " " + p3 + " " + p4;
-                if (xhr.responseText && xhr.responseText[0] == "{")
-                    err = JSON.parse(xhr.responseText).Message;
-                iziToast.error({
-                  title: 'Gagal load data',
-                  message: `${err}`,
-                  position: 'topRight'
-                })
-                return false;
-            }
-          });
+          
+          getDataComplaint(urlData, 'listeditComplaint')
+          getDataUptd(urlData, 'listeditUptd')
+          
+          $("#listeditUptd").select2({
+            dropdownParent: $("#editModal")
+          });    
+           
       },
       complete: function (responseJSON) {
         document.getElementById("overlay").setAttribute("hidden", false);
-        $(`#opdnameEdit option[value=${responseJSON.responseJSON.data.opd_id}]`).attr('selected','selected');
       },
       error: function (xhr, status, p3, p4) {
           var err = "Error " + " " + status + " " + p3 + " " + p4;
@@ -305,44 +279,42 @@ function openEditModal(id){
           return false;
       }
     }).done(function(result){      
-      setTimeout(() => {
-        $(`#listeditUptd option[value=${result.data.uptd_id}]`).attr('selected','selected');
-      }, 550);
-      setTimeout(() => {
-        $(`#listeditComplaint option[value=${result.data.comp_id}]`).attr('selected','selected');
-        $(`#editmonthName option[value=${result.data.month}]`).attr('selected','selected');
-        $('#amountinsidentEdit').val(result.data.amount)
-        
-        $(document).ready(function() {
-          $('.minus').click(function () {
-            var input = $(this).parent().find('input');
-            var count = parseInt(input.val()) - 1;
-            count = count < 1 ? 0 : count;
-            input.val(count);
-            input.change();
-            return false;
-          });
-          $('.plus').click(function () {
-            var input = $(this).parent().find('input');
-            if (input.val() == ''){
-              input.val('0')
-            }
-            input.val(parseInt(input.val()) + 1);
-            input.change();
-            return false;
-          });
+      // setTimeout(() => {
+      // }, 450);
+      $(`#listeditUptd option[value=${result.data.uptd_id}]`).attr('selected','selected');
+      $(`#listeditComplaint option[value=${result.data.comp_id}]`).attr('selected','selected');
+      $(`#editmonthName option[value=${result.data.month}]`).attr('selected','selected');
+      $('#amountinsidentEdit').val(result.data.amount)
+      
+      $(document).ready(function() {
+        $('.minus').click(function () {
+          var input = $(this).parent().find('input');
+          var count = parseInt(input.val()) - 1;
+          count = count < 1 ? 0 : count;
+          input.val(count);
+          input.change();
+          return false;
         });
+        $('.plus').click(function () {
+          var input = $(this).parent().find('input');
+          if (input.val() == ''){
+            input.val('0')
+          }
+          input.val(parseInt(input.val()) + 1);
+          input.change();
+          return false;
+        });
+      });
 
-        $('#editModal').on('hidden.bs.modal', function (e) {
-          $(this)
-            .find("input,textarea,select")
-              .val('')
-              .end()
-            .find("input[type=checkbox], input[type=radio]")
-              .prop("checked", "")
-              .end();
-        })
-      }, 150);
+      $('#editModal').on('hidden.bs.modal', function (e) {
+        $(this)
+          .find("input,textarea,select")
+            .val('')
+            .end()
+          .find("input[type=checkbox], input[type=radio]")
+            .prop("checked", "")
+            .end();
+      })
 
     });
 }
@@ -484,8 +456,9 @@ async function getDataOpd(urlData){
   });
 }
 
-async function getDataUptd(urlData, listId){
-  await $.ajax({
+function getDataUptd(urlData, listId){
+  $.ajax({
+    async: false,
     url: urlData + 'report/get-uptd-name',
     type: 'GET',
     headers: {
@@ -526,8 +499,9 @@ function getMonthName(monthInt){
   return monthNames[parseInt(monthInt)]
 }
 
-async function getDataComplaint(urlData, listId){
-  await $.ajax({
+function getDataComplaint(urlData, listId){
+  $.ajax({
+    async:false,
     url: urlData + 'report/get-complaint-name',
     type: 'GET',
     headers: {

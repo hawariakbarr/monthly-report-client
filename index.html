@@ -80,7 +80,7 @@
             <li class="nav-item dropdown">
               <a href="#" class="nav-link has-dropdown"><i class="fas fa-database"></i> <span>Data Insident</span></a>
               <ul class="dropdown-menu">
-                <li><a class="nav-link" href="bootstrap-alert.html">OPD Insident</a></li>
+                <li><a class="nav-link" href="opd-insident.html">OPD Insident</a></li>
                 <li><a class="nav-link" href="uptd-insident.html">UPTD Insident</a></li>
               </ul>
             </li>             
@@ -123,15 +123,15 @@
                       <div class="row">
                         <div class="form-group col-4 col-lg-4 col-md-4 col-sm-4">
                           <label>OPD</label>
-                          <select class="form-control" id="selectOpd" data-dropup-auto="false" onchange="getDataUptd(this.options[this.selectedIndex].value)"  placholder="--Select Data--" required>
-                            <option value="" selected>--Select--</option>  
+                          <select class="form-control select2" id="selectOpd" data-dropup-auto="false" onchange="getDataUptd(this.options[this.selectedIndex].value)"  placholder="--Select Data--" required>
+                            <option value="" selected>--Select OPD--</option>  
                             <option value="all">Select All</option>
                           </select>
                         </div>
                         <div class="form-group col-4 col-lg-4 col-md-4 col-sm-4">
                           <label>UPTD</label>
-                          <select class="form-control" id="selectUptd" data-dropup-auto="false" placholder="--Select Data--" disabled>
-                            <option value="" selected>--Select--</option>                              
+                          <select class="form-control select2" id="selectUptd" data-dropup-auto="false" placholder="--Select Data--" disabled>
+                            <option value="" selected>--Select UPTD--</option>                              
                             <option value="none">None</option>
                           </select>
                         </div>

@@ -336,6 +336,7 @@ function openEditModal(id){
                 return false;
             }
           });
+
       },
       complete: function (responseJSON) {
         document.getElementById("overlay").setAttribute("hidden", false);
@@ -356,6 +357,10 @@ function openEditModal(id){
       $(`#listispEdit option[value=${result.data.isp_id}]`).attr('selected','selected');
       $(`#listbandwithEdit option[value=${result.data.band_id}]`).attr('selected','selected');
       $(`#listuptdEdit option[value=${result.data.uptd_id}]`).attr('selected','selected');
+
+      $("#listuptdEdit").select2({
+        dropdownParent: $("#editModal")
+      });    
     });
 }
 

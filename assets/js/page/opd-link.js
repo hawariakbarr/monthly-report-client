@@ -236,6 +236,7 @@ function openEditModal(id){
           </div>
           `
           $.ajax({
+            async: false,
             url: urlData + 'report/get-opd-name',
             type: 'GET',
             headers: {
@@ -268,6 +269,7 @@ function openEditModal(id){
           });
 
           $.ajax({
+            async: false,
             url: urlData + 'report/get-band-list',
             type: 'GET',
             headers: {
@@ -300,6 +302,7 @@ function openEditModal(id){
           });
 
           $.ajax({
+            async: false,
             url: urlData + 'report/get-isp-name',
             type: 'GET',
             headers: {
@@ -330,15 +333,18 @@ function openEditModal(id){
                 return false;
             }
           });
+          
       },
       complete: function (responseJSON) {
         document.getElementById("overlay").setAttribute("hidden", false);
         $('#editModal').modal('show')
-        setTimeout(() => {
-          $(`#listopdEdit option[value=${responseJSON.responseJSON.data.opd_id}]`).attr('selected','selected');
-          $(`#listispEdit option[value=${responseJSON.responseJSON.data.isp_id}]`).attr('selected','selected');
-          $(`#listbandwithEdit option[value=${responseJSON.responseJSON.data.band_id}]`).attr('selected','selected');
-        }, 300)
+        $(`#listopdEdit option[value=${responseJSON.responseJSON.data.opd_id}]`).attr('selected','selected');
+        $(`#listispEdit option[value=${responseJSON.responseJSON.data.isp_id}]`).attr('selected','selected');
+        $(`#listbandwithEdit option[value=${responseJSON.responseJSON.data.band_id}]`).attr('selected','selected');
+
+        $("#listopdEdit").select2({
+          dropdownParent: $("#editModal")
+        });    
       },
       error: function (xhr, status, p3, p4) {
           var err = "Error " + " " + status + " " + p3 + " " + p4;

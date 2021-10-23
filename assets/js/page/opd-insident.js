@@ -18,8 +18,10 @@ window.onload = function() {
         .then(response => response.json())
         .then(json => urlData = json[0].local_url)
         .then(function(){
-          getDataOpd(urlData, 'opdName')
-          getDatatableUptd(urlData)
+          getDataOpd(urlData, 'listOpd')
+          getDatatable(urlData)
+          getDataUptd(urlData, 'listUptd')
+          getDataComplaint(urlData, 'listComplaint')
         });
   }
   else{
@@ -37,27 +39,24 @@ const getCookie = (cookie_name) =>{
   }
 }
 
-const userForm = document.getElementById("uptdFormData");
+const userForm = document.getElementById("formData");
 userForm.addEventListener("submit", function(e){  
   e.preventDefault();
-  var uptdName = document.getElementById('uptdName').value
-  var uptdAddress = document.getElementById('uptdAddress').value
-  var uptdPic = document.getElementById('uptdPic').value
-  var uptdPhone =  document.getElementById('uptdPhone').value
-  var opdId =  document.getElementById('opdName').value
+  var listOpd = document.getElementById('listOpd').value
+  var listComplaint = document.getElementById('listComplaint').value
+  var monthName = document.getElementById('monthName').value
+  var amountInsident =  document.getElementById('amountInsident').value
   
   //Obj of data to send in future like a dummyDb
   const data = { 
-    name: uptdName,
-    address: uptdAddress,
-    pic: uptdPic,
-    opd_id : parseInt(opdId),
-    phone_number: uptdPhone
+    opd_id: parseInt(listOpd),
+    comp_id: parseInt(listComplaint),
+    month: parseInt(monthName.slice(-2)),
+    amount: parseInt(amountInsident)
   };
 
   $.ajax({
-    async: false,
-    url: `${urlData}report/add-uptd`,
+    url: `${urlData}insident/add-opd-insident`,
     type: 'POST',
     data: JSON.stringify(data),
     datatype: 'json',
@@ -78,10 +77,11 @@ userForm.addEventListener("submit", function(e){
         }
         else{
           document.getElementById("overlay").setAttribute("hidden", false);      
-          $('#addUptdModal').modal('hide');
+          $('#addModal').modal('hide');
+          console.log(result.data)
           iziToast.success({
-            title: 'Uptd Berhasil Ditambahkan',
-            message: `Uptd Dengan Nama ${result.data.name} Berhasil Disimpan`,
+            title: 'Keluhan OPD Berhasil Ditambahkan',
+            message: `Keluhan OPD Dengan kategori ${result.data.complaint} Berhasil Disimpan`,
             position: 'topRight'
           })
           setTimeout(() => {
@@ -100,7 +100,7 @@ userForm.addEventListener("submit", function(e){
           message: `${err}`,
           position: 'topRight'
         })
-        $('#addUptdModal').modal('hide');
+        $('#addModal').modal('hide');
         return false;
     }
   }).fail(function (responseJSON, result, data) {
@@ -113,10 +113,9 @@ userForm.addEventListener("submit", function(e){
   });
 });
 
-function getDatatableUptd(urlData){
-    $.ajax({
-      async: false,
-      url: `${urlData}report/get-uptd-all`,
+async function getDatatable(urlData){
+    await $.ajax({
+      url: `${urlData}insident/get-all-opd-insident`,
       type: 'GET',
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -131,11 +130,10 @@ function getDatatableUptd(urlData){
           <table class="table table-striped" id="table-1">
             <thead>
               <tr>
-                <th>Nama Uptd</th>
-                <th>Alamat</th>
-                <th>Nama Opd</th>
-                <th>PIC</th>
-                <th>No Hp</th>
+                <th style="width: 330px;">Nama OPD</th>
+                <th>Jenis Keluhan</th>
+                <th style="text-align: center;">Jumlah Keluhan</th>
+                <th>Bulan</th>
                 <th class="text-center">Action</th>
               </tr>
             </thead>
@@ -150,14 +148,13 @@ function getDatatableUptd(urlData){
         result.data.forEach((element, index) => {
           listData += `
             <tr>
-              <td>${element.name}</td>
-              <td>${element.address}</td>
               <td>${element.opd_name}</td>
-              <td>${element.pic}</td>
-              <td>${element.phone_number}</td>
+              <td>${element.complaint}</td>
+              <td align="center">${element.amount}</td>
+              <td>${getMonthName(element.month)}</td>
               <td>
                 <button class="btn btn-info btn-sm btn-icon  mr-1" id="editBTn" data-toggle="tooltip" title="Edit" data-original-title="Edit" onClick="openEditModal(${element.id})"><i class="fas fa-pencil-alt fa-sm" style=" color:white"></i></button>
-                <button class="btn btn-danger btn-sm btn-icon" data-toggle="tooltip" title="Delete" onClick="deleteUptd(${element.id})" ><i class="fas fa-trash fa-sm" style=" color:white"></i></button>
+                <button class="btn btn-danger btn-sm btn-icon" data-toggle="tooltip" title="Delete" onClick="deleteData(${element.id})" ><i class="fas fa-trash fa-sm" style=" color:white"></i></button>
               </td>
             </tr>
           `
@@ -192,8 +189,7 @@ function getDatatableUptd(urlData){
 
 function openEditModal(id){
     $.ajax({
-      async: false,
-      url: `${urlData}report/get-uptd/` + id,
+      url: `${urlData}insident/get-opd-insident/` + id,
       type: 'GET',
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -207,40 +203,65 @@ function openEditModal(id){
           // element is div holding the ParticalView
           document.getElementById('editFormData').innerHTML = 
           `
-            <div class="col-12 col-md-12 col-lg-12">
+          <div class="col-12 col-md-12 col-lg-12">
             <div class="card">        
               <div class="card-body">
                 <div class="form-group">
-                  <label>Nama Opd</label>
-                  <input type="text" class="form-control" id="uptdnameEdit" required="" autocomplete="off" placeholder="Nama Opd" Value="${result.data.name}">
-                </div>
-                <div class="form-group">
-                  <label>Alamat</label>
-                  <input type="text" class="form-control" id="addressEdit" required="" autocomplete="off" placeholder="Masukan Alamat" Value="${result.data.address}">
-                </div>
-                <div class="form-group">
-                  <label>Nama Opd</label>
-                  <select class="form-control" id="opdnameEdit" name="opdnameEdit" required placholder="--Select Opd--">
-                    <option value="" selected>--Select Data--</option>
+                  <label>Nama OPD</label>
+                  <select class="form-control select2" id="listeditOpd" name="opd name" required placholder="--Select OPD--">
+                    <option value="" selected>--Select Data--</option>  
                   </select>
                 </div>
                 <div class="form-group">
-                  <label>PIC</label>
-                  <input type="text" class="form-control" id="picEdit" autocomplete="off" placeholder="Masukan Nama PIC" Value="${result.data.pic}">
+                  <label>Jenis Keluhan</label>
+                  <select class="form-control select2" id="listeditComplaint" name="complaint name" required placholder="--Select Complaint--">
+                    <option value="" selected>--Select Data--</option>  
+                  </select>
+                </div>                       
+                <div class="form-group">
+                  <label>Bulan</label>
+                  <select class="form-control select2" id="editmonthName" name="month name" required placholder="--Select Month--">
+                    <option value="" selected>--Select Data--</option>  
+                    <option value="1">Januari</option> 
+                    <option value="2">Februari</option> 
+                    <option value="3">Maret</option> 
+                    <option value="4">April</option>
+                    <option value="5">Mei</option>
+                    <option value="6">Juni</option> 
+                    <option value="7">July</option> 
+                    <option value="8">Agustus</option> 
+                    <option value="9">September</option> 
+                    <option value="10">Oktober</option> 
+                    <option value="11">November</option> 
+                    <option value="12">Desember</option> 
+                  </select>
                 </div>
                 <div class="form-group">
-                  <label>Phone Number</label>
-                  <input type="number" maxLength="14" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" class="form-control" id="userPhoneEdit" autocomplete="off" placeholder="Nomer Telepon" Value="${result.data.phone_number}">
+                  <label>Jumlah Keluhan</label>
+                  <div class="number amount-complaint">
+                    <span class="minus">-</span>
+                    <input type="text" value="" id="amountinsidentEdit" required="" autocomplete="off"  required/>
+                    <span class="plus">+</span>
+                  </div>
                 </div>
+              </div>
             </div>
+          
             <div class="text-right">
               <button class="btn btn-sm btn-danger mr-1" data-dismiss="modal">Close</button>
-              <button class="btn btn-sm btn-primary" onClick="editData(${result.data.id})">Save</button>        
+              <button class="btn btn-sm btn-primary" onclick="editData(${result.data.id})">Submit</button>        
             </div>
           </div>
           `
-          $('#editUptdModal').modal('show')
-          getDataOpd(urlData, 'opdnameEdit')
+          $('#editModal').modal('show')
+          getDataComplaint(urlData, 'listeditComplaint')
+          getDataOpd(urlData, 'listeditOpd')
+
+        
+          $("#listeditOpd").select2({
+            dropdownParent: $("#editModal")
+          });    
+          
       },
       complete: function (responseJSON) {
         document.getElementById("overlay").setAttribute("hidden", false);
@@ -256,35 +277,63 @@ function openEditModal(id){
           })
           return false;
       }
-    }).done(function(result){
-      $(`#opdnameEdit option[value=${result.data.opd_id}]`).attr('selected','selected');
-      $("#opdnameEdit").select2({
-        dropdownParent: $("#editUptdModal")
+    }).done(function(result){      
+      $(`#listeditOpd option[value=${result.data.opd_id}]`).attr('selected','selected');
+      $(`#listeditComplaint option[value=${result.data.comp_id}]`).attr('selected','selected');
+      $(`#editmonthName option[value=${result.data.month}]`).attr('selected','selected');
+      $('#amountinsidentEdit').val(result.data.amount)
+      
+      $(document).ready(function() {
+        $('.minus').click(function () {
+          var input = $(this).parent().find('input');
+          var count = parseInt(input.val()) - 1;
+          count = count < 1 ? 0 : count;
+          input.val(count);
+          input.change();
+          return false;
+        });
+        $('.plus').click(function () {
+          var input = $(this).parent().find('input');
+          if (input.val() == ''){
+            input.val('0')
+          }
+          input.val(parseInt(input.val()) + 1);
+          input.change();
+          return false;
+        });
       });
-    });    
+
+      $('#editModal').on('hidden.bs.modal', function (e) {
+        $(this)
+          .find("input,textarea,select")
+            .val('')
+            .end()
+          .find("input[type=checkbox], input[type=radio]")
+            .prop("checked", "")
+            .end();
+      })
+
+    });
 }
 
 function editData(id){
     $('#editFormData').on("submit", function(e){
         e.preventDefault()
 
-        var name = document.getElementById('uptdnameEdit').value
-        var address = document.getElementById('addressEdit').value
-        var pic =  document.getElementById('picEdit').value
-        var phoneNumber = document.getElementById('userPhoneEdit').value
-        var opdId = document.getElementById('opdnameEdit').value
+        var editlistOpd = document.getElementById('listeditOpd').value
+        var editlistComplaint = document.getElementById('listeditComplaint').value
+        var editmonthName =  document.getElementById('editmonthName').value
+        var editamountInsident = document.getElementById('amountinsidentEdit').value
 
         const data = { 
-            name: name,
-            address: address,
-            pic: pic,
-            opd_id: parseInt(opdId),
-            phone_number: phoneNumber.toString()
+            opd_id: parseInt(editlistOpd),
+            comp_id: parseInt(editlistComplaint),
+            month: parseInt(editmonthName),
+            amount: parseInt(editamountInsident)
         };
 
         $.ajax({
-        async: false,
-        url: `${urlData}report/update-uptd/` + id,
+        url: `${urlData}insident/update-opd-insident/` + id,
         type: 'PUT',
         headers: {
             "Authorization": getCookie("session")
@@ -297,11 +346,11 @@ function editData(id){
         },
         success: function (result) {
             // element is div holding the ParticalView
-            $('#editUserModal').modal('hide');
+            $('#editModal').modal('hide');
             document.getElementById("overlay").setAttribute("hidden", false);
             iziToast.success({
-                title: 'Update Data Berhasil',
-                message: `Data dengan nama opd ${result.data.name} berhasil diubah`,
+                title: 'Update Data Keluhan Berhasil',
+                message: `Keluhan UPTD Dengan kategori ${result.data.complaint} Berhasil Disimpan`,
                 position: 'topRight'
             })
             //store result.data.token ke cookies bagian ini
@@ -317,23 +366,22 @@ function editData(id){
             if (xhr.responseText && xhr.responseText[0] == "{")
                 err = JSON.parse(xhr.responseText).Message;
             iziToast.error({
-                title: 'Update data tidak berhasil',
+                title: 'Update data keluhan tidak berhasil',
                 message: `${err}`,
                 position: 'topRight'
             })
-            $('#editUserModal').modal('hide');
+            $('#editModal').modal('hide');
             return false;
         }
         });
     }); 
 }
 
-function deleteUptd(id){
+async function deleteData(id){
     var result = confirm("Are you sure to delete this data?");
     if (result) 
         $.ajax({
-        async: false,
-        url: `${urlData}report/delete-uptd/` + id,
+        url: `${urlData}insident/delete-opd-insident/` + id,
         type: 'DELETE',
         headers: {
             "Content-Type": "application/x-www-form-urlencoded",
@@ -386,7 +434,6 @@ function getDataOpd(urlData, listId){
     success: function (result) {      
       if(result.data.length > 0)
         result.data.forEach((element, index) => {
-          console.log(element.name)
           $(`#${listId}`).append(`<option value="${element.id}">${element.name}</option>`);
         }); 
     },
@@ -407,10 +454,10 @@ function getDataOpd(urlData, listId){
   });
 }
 
-function getDataUptd(id){
+function getDataUptd(urlData, listId){
   $.ajax({
     async: false,
-    url: urlData + 'report/get-uptd-name/' + id,
+    url: urlData + 'report/get-uptd-name',
     type: 'GET',
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
@@ -418,30 +465,55 @@ function getDataUptd(id){
     },
     beforeSend: function () {
         document.getElementById("overlay").removeAttribute("hidden");
-        $('#selectUptd').prop("disabled", false); // Element(s) are now enabled.
     },
     success: function (result) {       
-      if(result.data.length > 0 && id != "all")
-      {
-        $('#selectUptd').empty()
-        $('#selectUptd').append(`<option value="">--Select--</option>`);
-        $('#selectUptd').append(`<option value="all">Select All</option>`);
-        $('#selectUptd').append(`<option value="none">None</option>`); 
+      if(result.data.length > 0)
         result.data.forEach((element, index) => {
-          $('#selectUptd').append(`<option value="${element.id}">${element.name}</option>`);
+          $(`#${listId}`).append(`<option value="${element.id}">${element.name}</option>`);
         }); 
-      }
-      else if(result.data.length <= 0 && id != "all"){
-        $('#selectUptd').empty()
-        $('#selectUptd').append(`<option value="">--Select--</option>`);
-        $('#selectUptd').append(`<option value="none">None</option>`);
-      }else if(id == "all"){
-        $('#selectUptd').empty()
-        $('#selectUptd').append(`<option value="">--Select--</option>`);
-        $('#selectUptd').append(`<option value="all">Select All</option>`);
-        $('#selectUptd').append(`<option value="none">None</option>`); 
-      }
-      
+    },
+    complete: function (responseJSON) {      
+      document.getElementById("overlay").setAttribute("hidden", false);
+    },
+    error: function (xhr, status, p3, p4) {
+        var err = "Error " + " " + status + " " + p3 + " " + p4;
+        if (xhr.responseText && xhr.responseText[0] == "{")
+            err = JSON.parse(xhr.responseText).Message;
+        iziToast.error({
+          title: 'Gagal load data',
+          message: `${err}`,
+          position: 'topRight'
+        })
+        return false;
+    }
+  });
+}
+
+function getMonthName(monthInt){
+  const monthNames = ["", "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+    "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+  ];
+  
+  return monthNames[parseInt(monthInt)]
+}
+
+function getDataComplaint(urlData, listId){
+  $.ajax({
+    async: false,
+    url: urlData + 'report/get-complaint-name',
+    type: 'GET',
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Authorization": getCookie("session")
+    },
+    beforeSend: function () {
+        document.getElementById("overlay").removeAttribute("hidden");
+    },
+    success: function (result) {     
+      if(result.data.length > 0)
+      result.data.forEach((element, index) => {
+        $(`#${listId}`).append(`<option value="${element.id}">${element.category}</option>`);
+      }); 
     },
     complete: function (responseJSON) {      
       document.getElementById("overlay").setAttribute("hidden", false);
@@ -480,7 +552,6 @@ $('.daterange-btn').daterangepicker({
 
   const d = new Date(start);
   dt_month = monthNames[d.getMonth()]
-  console.log(dt_month)
   alert(label + ' Date Selected ' + start.format('YYYY-MM-DD').toString() + '-00-00-00' +' Until '+  end.format('YYYY-MM-DD').toString() + '-00-00-00')
   start_date = start.format('YYYY-MM-DD').toString() + '-00-00-00'
   end_date = end.format('YYYY-MM-DD').toString() + '-00-00-00'
@@ -494,3 +565,33 @@ $('.daterange-btn').daterangepicker({
 // 2021-9-01-00-00-00
 
 $(".inputtags").tagsinput('items');
+
+$(document).ready(function() {
+  $('.minus').click(function () {
+    var input = $(this).parent().find('input');
+    var count = parseInt(input.val()) - 1;
+    count = count < 1 ? 0 : count;
+    input.val(count);
+    input.change();
+    return false;
+  });
+  $('.plus').click(function () {
+    var input = $(this).parent().find('input');
+    if (input.val() == ''){
+      input.val('0')
+    }
+    input.val(parseInt(input.val()) + 1);
+    input.change();
+    return false;
+  });
+});
+
+$('#addModal').on('hidden.bs.modal', function (e) {
+  $(this)
+    .find("input,textarea,select")
+       .val('')
+       .end()
+    .find("input[type=checkbox], input[type=radio]")
+       .prop("checked", "")
+       .end();
+})
