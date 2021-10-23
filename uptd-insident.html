@@ -24,6 +24,7 @@
   <!-- Template CSS -->
   <link rel="stylesheet" href="../assets/css/style.css">
   <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/uptd-insident.css">
 </head>
 
 <body>
@@ -31,77 +32,77 @@
     <div class="main-wrapper">
         <div class="navbar-bg"></div>
         <nav class="navbar navbar-expand-lg main-navbar">
-        <form class="form-inline mr-auto">
-            <ul class="navbar-nav mr-3">
-            <li><a href="#" data-toggle="sidebar" class="nav-link nav-link-lg"><i class="fas fa-bars"></i></a></li>
-            <li><a href="#" data-toggle="search" class="nav-link nav-link-lg d-sm-none"><i class="fas fa-search"></i></a></li>
-            </ul>
-        </form>
-        <ul class="navbar-nav navbar-right">
-            <li class="dropdown">
-            <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
-            <img alt="image" src="../assets/img/avatar/avatar-2.png" class="rounded-circle mr-1">
-            <div class="d-sm-none d-lg-inline-block" id="username"></div>
-            </a>
-            <div class="dropdown-menu dropdown-menu-right">
-                <!-- <div class="dropdown-title">Logged in 5 min ago</div> -->
-                <!-- <a href="features-profile.html" class="dropdown-item has-icon">
-                <i class="far fa-user"></i> Profile
-                </a>-->
-                <!-- for super admin only -->
-                <a href="javascript:usermenuAuth()" id="userMenu" class="dropdown-item has-icon">
-                <i class="fas fa-bolt"></i> User Management
-                </a>
-                <a href="features-settings.html" class="dropdown-item has-icon">
-                <i class="fas fa-cog"></i> Settings
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="javascript:logout()" class="dropdown-item has-icon text-danger">
-                <i class="fas fa-sign-out-alt"></i> Logout
-                </a>
-            </div>
-            </li>
-        </ul>
+          <form class="form-inline mr-auto">
+              <ul class="navbar-nav mr-3">
+              <li><a href="#" data-toggle="sidebar" class="nav-link nav-link-lg"><i class="fas fa-bars"></i></a></li>
+              <li><a href="#" data-toggle="search" class="nav-link nav-link-lg d-sm-none"><i class="fas fa-search"></i></a></li>
+              </ul>
+          </form>
+          <ul class="navbar-nav navbar-right">
+              <li class="dropdown">
+              <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
+              <img alt="image" src="../assets/img/avatar/avatar-2.png" class="rounded-circle mr-1">
+              <div class="d-sm-none d-lg-inline-block" id="username"></div>
+              </a>
+              <div class="dropdown-menu dropdown-menu-right">
+                  <!-- <div class="dropdown-title">Logged in 5 min ago</div> -->
+                  <!-- <a href="features-profile.html" class="dropdown-item has-icon">
+                  <i class="far fa-user"></i> Profile
+                  </a>-->
+                  <!-- for super admin only -->
+                  <a href="javascript:usermenuAuth()" id="userMenu" class="dropdown-item has-icon">
+                  <i class="fas fa-bolt"></i> User Management
+                  </a>
+                  <a href="features-settings.html" class="dropdown-item has-icon">
+                  <i class="fas fa-cog"></i> Settings
+                  </a>
+                  <div class="dropdown-divider"></div>
+                  <a href="javascript:logout()" class="dropdown-item has-icon text-danger">
+                  <i class="fas fa-sign-out-alt"></i> Logout
+                  </a>
+              </div>
+              </li>
+          </ul>
         </nav>
         <div class="main-sidebar">
-        <aside id="sidebar-wrapper">
-            <div class="sidebar-brand">
-            <a href="index.html">Diskominfo Jabar</a>
-            </div>
-            <div class="sidebar-brand sidebar-brand-sm">
-            <a href="index.html">DJB</a>
-            </div>
-            <ul class="sidebar-menu">
-            <li class="menu-header">Dashboard</li>
-            <li><a class="nav-link" href="index.html"><i class="far fa-file-alt"></i> <span>Data Laporan</span></a></li>
-            <!-- <li><a class="nav-link" href="insiden-uploader.html"><i class="far fa-file-alt"></i> <span>Insiden</span></a></li> -->
-            <!-- <li><a class="nav-link" href="link-uploader.html"><i class="far fa-file-alt"></i> <span>Opd & Uptd Link</span></a></li> -->
-            <li class="nav-item dropdown active">
-                <a href="#" class="nav-link has-dropdown"><i class="fas fa-database"></i> <span>Data Link</span></a>
-                <ul class="dropdown-menu">
-                  <li><a class="nav-link" href="opd-link.html">OPD Link</a></li>
-                  <li class="active"><a class="nav-link" href="uptd-link.html">UPTD Link</a></li>
-                </ul>
-            </li>
-            <li class="nav-item dropdown">
-                <a href="#" class="nav-link has-dropdown"><i class="fas fa-database"></i> <span>Data Insident</span></a>
-                <ul class="dropdown-menu">
-                  <li><a class="nav-link" href="bootstrap-alert.html">OPD Insident</a></li>
-                  <li><a class="nav-link" href="uptd-insident.html">UPTD Insident</a></li>
-                </ul>
-            </li>             
-            <li class="nav-item dropdown">
-              <a href="#" class="nav-link has-dropdown"><i class="fas fa-database"></i> <span>Data Master</span></a>
-              <ul class="dropdown-menu">
-                <li><a class="nav-link" href="master-opd.html">Master OPD</a></li>
-                <li><a class="nav-link" href="master-uptd.html">Master UPTD</a></li>
-                <li><a class="nav-link" href="master-isp.html">Master ISP</a></li>
-                <li><a class="nav-link" href="master-bandwith.html">Master Bandwith</a></li>
-                <li><a class="nav-link" href="master-complaint.html">Master Complaint</a></li>
-              </ul>
-          </li>
-            </ul>          
-        </aside>
+          <aside id="sidebar-wrapper">
+              <div class="sidebar-brand">
+              <a href="index.html">Diskominfo Jabar</a>
+              </div>
+              <div class="sidebar-brand sidebar-brand-sm">
+              <a href="index.html">DJB</a>
+              </div>
+              <ul class="sidebar-menu">
+                <li class="menu-header">Dashboard</li>
+                <li><a class="nav-link" href="index.html"><i class="far fa-file-alt"></i> <span>Data Laporan</span></a></li>
+                <!-- <li><a class="nav-link" href="insiden-uploader.html"><i class="far fa-file-alt"></i> <span>Insiden</span></a></li> -->
+                <!-- <li><a class="nav-link" href="link-uploader.html"><i class="far fa-file-alt"></i> <span>Opd & Uptd Link</span></a></li> -->
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link has-dropdown"><i class="fas fa-database"></i> <span>Data Link</span></a>
+                    <ul class="dropdown-menu">
+                      <li><a class="nav-link" href="opd-link.html">OPD Link</a></li>
+                      <li><a class="nav-link" href="uptd-link.html">UPTD Link</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown active">
+                    <a href="#" class="nav-link has-dropdown"><i class="fas fa-database"></i> <span>Data Insident</span></a>
+                    <ul class="dropdown-menu">
+                      <li><a class="nav-link" href="bootstrap-alert.html">OPD Insident</a></li>
+                      <li class="active"><a class="nav-link" href="uptd-insident.html">UPTD Insident</a></li>
+                    </ul>
+                </li>   
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link has-dropdown"><i class="fas fa-database"></i> <span>Data Master</span></a>
+                    <ul class="dropdown-menu">
+                      <li><a class="nav-link" href="master-opd.html">Master OPD</a></li>
+                      <li><a class="nav-link" href="master-uptd.html">Master UPTD</a></li>
+                      <li><a class="nav-link" href="master-isp.html">Master ISP</a></li>
+                      <li><a class="nav-link" href="master-bandwith.html">Master Bandwith</a></li>
+                      <li><a class="nav-link" href="master-complaint.html">Master Complaint</a></li>
+                    </ul>
+                </li>          
+              </ul>          
+          </aside>
         </div>
 
         <!-- Modal Add -->
@@ -109,20 +110,16 @@
             <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                <h5 class="modal-title" id="modalLable">Tambah Uptd Link Baru</h5>
+                <h5 class="modal-title" id="modalLable">Tambah Keluhan UPTD</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
                 </div>
                 <div class="modal-body">
-                <form action="" id="formData">
+                  <form action="" id="formData">
                     <div class="col-12 col-md-12 col-lg-12">
                       <div class="card">        
                         <div class="card-body">
-                          <div class="form-group">
-                            <label>PRTG</label>
-                            <input type="number" class="form-control" id="prtgId" required="" autocomplete="off" placeholder="ID PRTG" Value="">
-                          </div>
                           <div class="form-group">
                             <label>Nama Uptd</label>
                             <select class="form-control" id="listUptd" name="uptd name" required placholder="--Select Uptd--">
@@ -130,16 +127,36 @@
                             </select>
                           </div>
                           <div class="form-group">
-                            <label>ISP</label>
-                            <select class="form-control" id="listIsp" name="isp name" required placholder="--Select ISP--">
+                            <label>Jenis Keluhan</label>
+                            <select class="form-control" id="listComplaint" name="complaint name" required placholder="--Select Complaint--">
                               <option value="" selected>--Select Data--</option>  
+                            </select>
+                          </div>                       
+                          <div class="form-group">
+                            <label>Bulan</label>
+                            <select class="form-control" id="monthName" name="month name" required placholder="--Select Month--">
+                              <option value="" selected>--Select Data--</option>  
+                              <option value="1">Januari</option> 
+                              <option value="2">Februari</option> 
+                              <option value="3">Maret</option> 
+                              <option value="4">April</option>
+                              <option value="5">Mei</option>
+                              <option value="6">Juni</option> 
+                              <option value="7">July</option> 
+                              <option value="8">Agustus</option> 
+                              <option value="9">September</option> 
+                              <option value="10">Oktober</option> 
+                              <option value="11">November</option> 
+                              <option value="12">Desember</option> 
                             </select>
                           </div>
                           <div class="form-group">
-                            <label>Bandwith</label>
-                            <select class="form-control" id="listBandwith" name="bandwith" required placholder="--Select Bandwith--">
-                              <option value="" selected>--Select Data--</option>  
-                            </select>
+                            <label>Jumlah Keluhan</label>
+                            <div class="number amount-complaint">
+                              <span class="minus">-</span>
+                              <input type="text" value="" id="amountInsident" required="" autocomplete="off"  required/>
+                              <span class="plus">+</span>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -149,26 +166,26 @@
                           <button class="btn btn-sm btn-primary">Submit</button>        
                       </div>
                     </div>
-                </form>
+                  </form>
                 </div>
             </div>
             </div>
         </div>
 
         <!-- Modal Edit -->
-        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="modalLable" aria-hidden="true">
+        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLable" aria-hidden="true">
             <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                <h5 class="modal-title" id="editModalLable">Edit Data Uptd</h5>
+                <h5 class="modal-title" id="editModalLable">Ubah Data Keluhan</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
                 </div>
                 <div class="modal-body">
-                <form id="editFormData">
-                    <!-- data will show here -->
-                </form>
+                  <form id="editFormData">
+                      <!-- data will show here -->
+                  </form>
                 </div>
             </div>
             </div>
@@ -182,15 +199,15 @@
         <!-- loading overlay section -->
         <section class="section">
           <div class="section-header">
-            <h1>Data UPTD Link</h1>
+            <h1>Data Keluhan UPTD</h1>
           </div>
 
-          <h2 class="section-title">Tabel Data Uptd Link</h2>
+          <h2 class="section-title">Tabel Keluhan UPTD</h2>
           <div class="row">
             <div class="col-12">
               <div class="card">
                 <div class="card-header">
-                    <input class="btn btn-primary sm" type="button" id="buttonModal" value="Tambah Data Uptd Link"  data-toggle="modal" data-target="#addModal">
+                    <input class="btn btn-primary sm" type="button" id="addBtn" value="Tambah Data Keluhan UPTD"  data-toggle="modal" data-target="#addModal">
                 </div>
                 <div class="card-body" id="table-here"></div>
               </div>
@@ -239,7 +256,7 @@
   <script src="../assets/js/custom.js"></script>
 
   <!-- Page Specific JS File -->
-  <script src="../assets/js/page/uptd-link.js"></script>
+  <script src="../assets/js/page/uptd-insident.js"></script>
   <script type="text/javascript" src="/env.json"></script>
 </body>
 </html>
