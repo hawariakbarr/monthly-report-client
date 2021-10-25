@@ -11,6 +11,7 @@ window.onload = function() {
   {
     if(getCookie("role") == "false"){
       document.getElementById("userMenu").setAttribute("hidden", true);
+      location.replace("errors-403.html")
     }else{
       document.getElementById("userMenu").removeAttribute("hidden");
     }
@@ -78,8 +79,8 @@ userForm.addEventListener("submit", function(e){
           document.getElementById("overlay").setAttribute("hidden", false);      
           $('#addUserModal').modal('hide');
           iziToast.success({
-            title: 'Opd Berhasil Ditambahkan',
-            message: `Opd Dengan Nama ${result.data.name} Berhasil Disimpan`,
+            title: 'OPD Berhasil Ditambahkan',
+            message: `OPD Dengan Nama ${result.data.name} Berhasil Disimpan`,
             position: 'topRight'
           })
           $('#addOpdModal').modal('hide');
@@ -206,8 +207,8 @@ function openEditModal(id){
             <div class="card">        
               <div class="card-body">
                 <div class="form-group">
-                  <label>Nama Opd</label>
-                  <input type="text" class="form-control" id="opdnameEdit" required="" autocomplete="off" placeholder="Nama Opd" Value="${result.data.name}">
+                  <label>Nama OPD</label>
+                  <input type="text" class="form-control" id="opdnameEdit" required="" autocomplete="off" placeholder="Nama OPD" Value="${result.data.name}">
                 </div>
                 <div class="form-group">
                   <label>Alamat</label>

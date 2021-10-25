@@ -11,6 +11,7 @@ window.onload = function() {
   {
     if(getCookie("role") == "false"){
       document.getElementById("userMenu").setAttribute("hidden", true);
+      location.replace("errors-403.html")
     }else{
       document.getElementById("userMenu").removeAttribute("hidden");
     }
@@ -198,7 +199,7 @@ function openEditModal(id){
               <div class="card-body">
                 <div class="form-group">
                   <label>Nama Isp</label>
-                  <input type="text" class="form-control" id="nameEdit" required="" autocomplete="off" placeholder="Nama Opd" Value="${result.data.name}">
+                  <input type="text" class="form-control" id="nameEdit" required="" autocomplete="off" placeholder="Nama OPD" Value="${result.data.name}">
                 </div>
             </div>
             <div class="text-right">

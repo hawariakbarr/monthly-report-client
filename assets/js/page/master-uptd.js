@@ -11,6 +11,7 @@ window.onload = function() {
   {
     if(getCookie("role") == "false"){
       document.getElementById("userMenu").setAttribute("hidden", true);
+      location.replace("errors-403.html")
     }else{
       document.getElementById("userMenu").removeAttribute("hidden");
     }
@@ -80,8 +81,8 @@ userForm.addEventListener("submit", function(e){
           document.getElementById("overlay").setAttribute("hidden", false);      
           $('#addUptdModal').modal('hide');
           iziToast.success({
-            title: 'Uptd Berhasil Ditambahkan',
-            message: `Uptd Dengan Nama ${result.data.name} Berhasil Disimpan`,
+            title: 'UPTD Berhasil Ditambahkan',
+            message: `UPTD Dengan Nama ${result.data.name} Berhasil Disimpan`,
             position: 'topRight'
           })
           setTimeout(() => {
@@ -131,9 +132,9 @@ function getDatatableUptd(urlData){
           <table class="table table-striped" id="table-1">
             <thead>
               <tr>
-                <th>Nama Uptd</th>
+                <th>Nama UPTD</th>
                 <th>Alamat</th>
-                <th>Nama Opd</th>
+                <th>Nama OPD</th>
                 <th>PIC</th>
                 <th>No Hp</th>
                 <th class="text-center">Action</th>
@@ -211,16 +212,16 @@ function openEditModal(id){
             <div class="card">        
               <div class="card-body">
                 <div class="form-group">
-                  <label>Nama Opd</label>
-                  <input type="text" class="form-control" id="uptdnameEdit" required="" autocomplete="off" placeholder="Nama Opd" Value="${result.data.name}">
+                  <label>Nama UPTD</label>
+                  <input type="text" class="form-control" id="uptdnameEdit" required="" autocomplete="off" placeholder="Nama OPD" Value="${result.data.name}">
                 </div>
                 <div class="form-group">
                   <label>Alamat</label>
                   <input type="text" class="form-control" id="addressEdit" required="" autocomplete="off" placeholder="Masukan Alamat" Value="${result.data.address}">
                 </div>
                 <div class="form-group">
-                  <label>Nama Opd</label>
-                  <select class="form-control" id="opdnameEdit" name="opdnameEdit" required placholder="--Select Opd--">
+                  <label>Nama OPD</label>
+                  <select class="form-control" id="opdnameEdit" name="opdnameEdit" required placholder="--Select OPD--">
                     <option value="" selected>--Select Data--</option>
                   </select>
                 </div>
@@ -301,7 +302,7 @@ function editData(id){
             document.getElementById("overlay").setAttribute("hidden", false);
             iziToast.success({
                 title: 'Update Data Berhasil',
-                message: `Data dengan nama opd ${result.data.name} berhasil diubah`,
+                message: `Data dengan nama ${result.data.name} berhasil diubah`,
                 position: 'topRight'
             })
             //store result.data.token ke cookies bagian ini

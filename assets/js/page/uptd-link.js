@@ -11,6 +11,7 @@ window.onload = function() {
   {
     if(getCookie("role") == "false"){
       document.getElementById("userMenu").setAttribute("hidden", true);
+      location.replace("errors-403.html")
     }else{
       document.getElementById("userMenu").removeAttribute("hidden");
     }
@@ -80,8 +81,8 @@ userForm.addEventListener("submit", function(e){
         else{
           document.getElementById("overlay").setAttribute("hidden", false);      
           iziToast.success({
-            title: 'Uptd link Berhasil Ditambahkan',
-            message: `Uptd link dengan prtg-id ${result.data.prtg_id} Berhasil Disimpan`,
+            title: 'UPTD link Berhasil Ditambahkan',
+            message: `UPTD link dengan prtg-id ${result.data.prtg_id} Berhasil Disimpan`,
             position: 'topRight'
           })
           $('#addModal').modal('hide');
@@ -213,8 +214,8 @@ function openEditModal(id){
                 <input type="number" class="form-control" id="prtgEdit" required="" autocomplete="off" placeholder="ID PRTG" Value="${result.data.prtg_id}">
               </div>
               <div class="form-group">
-                <label>Nama Uptd</label>
-                <select class="form-control" id="listuptdEdit" name="uptd name" required placholder="--Select Uptd--">
+                <label>Nama UPTD</label>
+                <select class="form-control" id="listuptdEdit" name="uptd name" required placholder="--Select UPTD--">
                   <option value="" selected>--Select Data--</option>  
                 </select>
               </div>

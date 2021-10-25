@@ -11,6 +11,7 @@ window.onload = function() {
   {
     if(getCookie("role") == "false"){
       document.getElementById("userMenu").setAttribute("hidden", true);
+      location.replace("errors-403.html")
     }else{
       document.getElementById("userMenu").removeAttribute("hidden");
     }
@@ -130,7 +131,7 @@ async function getDatatableUptd(urlData){
           <table class="table table-striped" id="table-1">
             <thead>
               <tr>
-                <th style="width: 330px;">Nama Uptd</th>
+                <th style="width: 330px;">Nama UPTD</th>
                 <th>Jenis Keluhan</th>
                 <th style="text-align: center;">Jumlah Keluhan</th>
                 <th>Bulan</th>
@@ -208,8 +209,8 @@ function openEditModal(id){
             <div class="card">        
               <div class="card-body">
                 <div class="form-group">
-                  <label>Nama Uptd</label>
-                  <select class="form-control select2" id="listeditUptd" name="uptd name" required placholder="--Select Uptd--">
+                  <label>Nama UPTD</label>
+                  <select class="form-control select2" id="listeditUptd" name="uptd name" required placholder="--Select UPTD--">
                     <option value="" selected>--Select Data--</option>  
                   </select>
                 </div>
